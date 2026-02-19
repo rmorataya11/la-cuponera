@@ -54,17 +54,17 @@ export default function OfertaDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <p className="text-gray-500">Cargando...</p>
+      <div className="flex justify-center py-16">
+        <div className="text-slate-500 text-sm font-medium">Cargando...</div>
       </div>
     );
   }
 
   if (error || !oferta) {
     return (
-      <div>
-        <p className="text-red-600">{error || 'Oferta no encontrada.'}</p>
-        <Link to="/ofertas" className="mt-4 inline-block text-orange-600 hover:text-orange-700">
+      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700">
+        {error || 'Oferta no encontrada.'}
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
           ← Volver a ofertas
         </Link>
       </div>
@@ -73,69 +73,74 @@ export default function OfertaDetailPage() {
 
   return (
     <div className="max-w-2xl">
-      <Link to="/ofertas" className="text-orange-600 hover:text-orange-700 text-sm mb-4 inline-block">
+      <Link
+        to="/ofertas"
+        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-orange-600 mb-6 transition"
+      >
         ← Volver a ofertas
       </Link>
 
-      <article className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-800">{oferta.titulo}</h1>
-        {empresa && <p className="text-gray-600 mt-1">{empresa.nombre}</p>}
-        {rubro && (
-          <span className="inline-block mt-2 px-2 py-0.5 text-sm bg-gray-100 text-gray-700 rounded">
-            {rubro.nombre}
-          </span>
-        )}
-
-        <div className="mt-4 flex items-baseline gap-3">
-          <span className="text-2xl font-bold text-orange-600">
-            ${typeof oferta.precioOferta === 'number' ? oferta.precioOferta.toFixed(2) : oferta.precioOferta}
-          </span>
-          {typeof oferta.precioRegular === 'number' && (
-            <span className="text-gray-400 line-through">${oferta.precioRegular.toFixed(2)}</span>
+      <article className="bg-white rounded-xl border border-slate-200/80 shadow-card overflow-hidden">
+        <div className="p-6 sm:p-8">
+          {rubro && (
+            <span className="inline-block px-2.5 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-md mb-3">
+              {rubro.nombre}
+            </span>
           )}
-        </div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{oferta.titulo}</h1>
+          {empresa && <p className="text-slate-600 mt-1">{empresa.nombre}</p>}
 
-        {oferta.descripcion && (
-          <div className="mt-4">
-            <h2 className="font-semibold text-gray-800">Descripción</h2>
-            <p className="text-gray-600 whitespace-pre-wrap">{oferta.descripcion}</p>
+          <div className="mt-6 flex items-baseline gap-3">
+            <span className="text-2xl font-bold text-orange-600">
+              ${typeof oferta.precioOferta === 'number' ? oferta.precioOferta.toFixed(2) : oferta.precioOferta}
+            </span>
+            {typeof oferta.precioRegular === 'number' && (
+              <span className="text-slate-400 line-through">${oferta.precioRegular.toFixed(2)}</span>
+            )}
           </div>
-        )}
-        {oferta.otrosDetalles && (
-          <div className="mt-4">
-            <h2 className="font-semibold text-gray-800">Otros detalles</h2>
-            <p className="text-gray-600 whitespace-pre-wrap">{oferta.otrosDetalles}</p>
-          </div>
-        )}
 
-        <div className="mt-4 text-sm text-gray-500">
-          <p>Válida para compra hasta: {oferta.fechaFin}</p>
-          <p>Fecha límite para usar el cupón: {oferta.fechaLimiteUso}</p>
-          {oferta.cantidadLimite != null && (
-            <p>
-              Cupones disponibles: {Math.max(0, (oferta.cantidadLimite ?? 0) - (oferta.cuponesVendidos ?? 0))}
-            </p>
+          {oferta.descripcion && (
+            <div className="mt-6 pt-6 border-t border-slate-100">
+              <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Descripción</h2>
+              <p className="text-slate-600 mt-2 whitespace-pre-wrap">{oferta.descripcion}</p>
+            </div>
           )}
-        </div>
+          {oferta.otrosDetalles && (
+            <div className="mt-4">
+              <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Otros detalles</h2>
+              <p className="text-slate-600 mt-2 whitespace-pre-wrap">{oferta.otrosDetalles}</p>
+            </div>
+          )}
 
-        <div className="mt-6">
-          {puedeComprar ? (
-            <Link
-              to={`/ofertas/${id}/comprar`}
-              className="inline-block px-6 py-3 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700"
-            >
-              Comprar cupón
-            </Link>
-          ) : !vigente ? (
-            <p className="text-gray-500">Esta oferta ya no está disponible.</p>
-          ) : (
-            <p className="text-gray-600">
-              <Link to="/iniciar-sesion" className="text-orange-600 hover:text-orange-700 font-medium">
-                Inicia sesión
+          <div className="mt-6 pt-6 border-t border-slate-100 text-sm text-slate-500 space-y-1">
+            <p>Válida para compra hasta: {oferta.fechaFin}</p>
+            <p>Fecha límite para usar el cupón: {oferta.fechaLimiteUso}</p>
+            {oferta.cantidadLimite != null && (
+              <p>
+                Cupones disponibles: {Math.max(0, (oferta.cantidadLimite ?? 0) - (oferta.cuponesVendidos ?? 0))}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-8">
+            {puedeComprar ? (
+              <Link
+                to={`/ofertas/${id}/comprar`}
+                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition"
+              >
+                Comprar cupón
               </Link>
-              {' '}para comprar esta oferta.
-            </p>
-          )}
+            ) : !vigente ? (
+              <p className="text-slate-500">Esta oferta ya no está disponible.</p>
+            ) : (
+              <p className="text-slate-600">
+                <Link to="/iniciar-sesion" className="font-medium text-orange-600 hover:text-orange-700">
+                  Inicia sesión
+                </Link>
+                {' '}para comprar esta oferta.
+              </p>
+            )}
+          </div>
         </div>
       </article>
     </div>

@@ -44,62 +44,62 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Iniciar sesión</h1>
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Iniciar sesión</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="p-3 rounded-lg bg-red-100 text-red-700 text-sm" role="alert">
-            {error}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+              {error}
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="correo" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Correo
+            </label>
+            <input
+              id="correo"
+              name="correo"
+              type="email"
+              value={form.correo}
+              onChange={handleChange}
+              placeholder="correo@ejemplo.com"
+              required
+            />
           </div>
-        )}
 
-        <div>
-          <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-1">
-            Correo *
-          </label>
-          <input
-            id="correo"
-            name="correo"
-            type="email"
-            value={form.correo}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="correo@ejemplo.com"
-            required
-          />
-        </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Tu contraseña"
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Contraseña *
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Tu contraseña"
-            required
-          />
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+          </button>
+        </form>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2.5 px-4 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-        </button>
-      </form>
-
-      <p className="mt-4 text-center text-gray-600 text-sm">
-        ¿No tienes cuenta?{' '}
-        <Link to="/registro" className="text-orange-600 hover:text-orange-700 font-medium">
-          Regístrate
-        </Link>
-      </p>
+        <p className="mt-6 text-center text-sm text-slate-600">
+          ¿No tienes cuenta?{' '}
+          <Link to="/registro" className="font-medium text-orange-600 hover:text-orange-700">
+            Regístrate
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

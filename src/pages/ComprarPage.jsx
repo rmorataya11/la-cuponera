@@ -120,19 +120,21 @@ export default function ComprarPage() {
     }
   }
 
+  const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
+
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <p className="text-gray-500">Cargando...</p>
+      <div className="flex justify-center py-16">
+        <div className="text-slate-500 text-sm font-medium">Cargando...</div>
       </div>
     );
   }
 
   if (error || !oferta) {
     return (
-      <div>
-        <p className="text-red-600">{error || 'Oferta no encontrada.'}</p>
-        <Link to="/ofertas" className="mt-4 inline-block text-orange-600 hover:text-orange-700">
+      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700">
+        {error || 'Oferta no encontrada.'}
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
           ← Volver a ofertas
         </Link>
       </div>
@@ -141,9 +143,9 @@ export default function ComprarPage() {
 
   if (!vigente) {
     return (
-      <div>
-        <p className="text-gray-600">Esta oferta ya no está disponible para compra.</p>
-        <Link to={`/ofertas/${id}`} className="mt-4 inline-block text-orange-600 hover:text-orange-700">
+      <div className="rounded-xl bg-white border border-slate-200 p-6 text-slate-600">
+        Esta oferta ya no está disponible para compra.
+        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
           ← Volver al detalle
         </Link>
       </div>
@@ -154,107 +156,104 @@ export default function ComprarPage() {
 
   return (
     <div className="max-w-lg">
-      <Link to={`/ofertas/${id}`} className="text-orange-600 hover:text-orange-700 text-sm mb-4 inline-block">
+      <Link
+        to={`/ofertas/${id}`}
+        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-orange-600 mb-6 transition"
+      >
         ← Volver al detalle
       </Link>
 
-      <h1 className="text-2xl font-bold text-gray-800 mb-2">Comprar cupón</h1>
-      <p className="text-gray-600 mb-6">{oferta.titulo}{empresa ? ` · ${empresa.nombre}` : ''}</p>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {submitError && (
-          <div className="p-3 rounded-lg bg-red-100 text-red-700 text-sm" role="alert">
-            {submitError}
-          </div>
-        )}
-
-        <div>
-          <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700 mb-1">
-            Cantidad de cupones *
-          </label>
-          <input
-            id="cantidad"
-            name="cantidad"
-            type="number"
-            min={1}
-            max={maxCantidad}
-            value={form.cantidad}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            required
-          />
-          {cuponesDisponibles != null && (
-            <p className="text-sm text-gray-500 mt-1">{cuponesDisponibles} disponibles</p>
-          )}
-        </div>
-
-        <div className="border-t border-gray-200 pt-4">
-          <h2 className="font-semibold text-gray-800 mb-3">Datos de pago (simulación)</h2>
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="numeroTarjeta" className="block text-sm font-medium text-gray-700 mb-1">
-                Número de tarjeta *
-              </label>
-              <input
-                id="numeroTarjeta"
-                name="numeroTarjeta"
-                type="text"
-                inputMode="numeric"
-                placeholder="1234 5678 9012 3456"
-                value={form.numeroTarjeta}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                maxLength={19}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="vencimiento" className="block text-sm font-medium text-gray-700 mb-1">
-                  Vencimiento (MM/AA) *
-                </label>
-                <input
-                  id="vencimiento"
-                  name="vencimiento"
-                  type="text"
-                  placeholder="12/28"
-                  value={form.vencimiento}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  maxLength={5}
-                />
-              </div>
-              <div>
-                <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-1">
-                  CVV *
-                </label>
-                <input
-                  id="cvv"
-                  name="cvv"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="123"
-                  value={form.cvv}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  maxLength={4}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-lg font-semibold text-gray-800">
-          Total: ${total.toFixed(2)}
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Comprar cupón</h1>
+        <p className="text-slate-600 mt-1 mb-6">
+          {oferta.titulo}{empresa ? ` · ${empresa.nombre}` : ''}
         </p>
 
-        <button
-          type="submit"
-          disabled={comprando}
-          className="w-full py-2.5 px-4 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {comprando ? 'Procesando compra...' : 'Confirmar compra'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {submitError && (
+            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+              {submitError}
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="cantidad" className={labelClass}>Cantidad de cupones</label>
+            <input
+              id="cantidad"
+              name="cantidad"
+              type="number"
+              min={1}
+              max={maxCantidad}
+              value={form.cantidad}
+              onChange={handleChange}
+              required
+            />
+            {cuponesDisponibles != null && (
+              <p className="text-sm text-slate-500 mt-1">{cuponesDisponibles} disponibles</p>
+            )}
+          </div>
+
+          <div className="pt-5 border-t border-slate-100">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-3">
+              Datos de pago (simulación)
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="numeroTarjeta" className={labelClass}>Número de tarjeta</label>
+                <input
+                  id="numeroTarjeta"
+                  name="numeroTarjeta"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="1234 5678 9012 3456"
+                  value={form.numeroTarjeta}
+                  onChange={handleChange}
+                  maxLength={19}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="vencimiento" className={labelClass}>Vencimiento (MM/AA)</label>
+                  <input
+                    id="vencimiento"
+                    name="vencimiento"
+                    type="text"
+                    placeholder="12/28"
+                    value={form.vencimiento}
+                    onChange={handleChange}
+                    maxLength={5}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cvv" className={labelClass}>CVV</label>
+                  <input
+                    id="cvv"
+                    name="cvv"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="123"
+                    value={form.cvv}
+                    onChange={handleChange}
+                    maxLength={4}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-lg font-semibold text-slate-900">
+            Total: ${total.toFixed(2)}
+          </p>
+
+          <button
+            type="submit"
+            disabled={comprando}
+            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {comprando ? 'Procesando compra...' : 'Confirmar compra'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

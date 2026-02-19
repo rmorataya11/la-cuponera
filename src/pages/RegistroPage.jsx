@@ -71,161 +71,72 @@ export default function RegistroPage() {
     }
   }
 
+  const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
+
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Registro de cliente</h1>
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Registro de cliente</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="p-3 rounded-lg bg-red-100 text-red-700 text-sm" role="alert">
-            {error}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+              {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="nombres" className={labelClass}>Nombres</label>
+              <input id="nombres" name="nombres" type="text" value={form.nombres} onChange={handleChange} placeholder="Juan Carlos" required />
+            </div>
+            <div>
+              <label htmlFor="apellidos" className={labelClass}>Apellidos</label>
+              <input id="apellidos" name="apellidos" type="text" value={form.apellidos} onChange={handleChange} placeholder="Pérez López" required />
+            </div>
           </div>
-        )}
 
-        <div>
-          <label htmlFor="nombres" className="block text-sm font-medium text-gray-700 mb-1">
-            Nombres *
-          </label>
-          <input
-            id="nombres"
-            name="nombres"
-            type="text"
-            value={form.nombres}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Ej. Juan Carlos"
-            required
-          />
-        </div>
+          <div>
+            <label htmlFor="telefono" className={labelClass}>Teléfono</label>
+            <input id="telefono" name="telefono" type="tel" value={form.telefono} onChange={handleChange} placeholder="7000-0000" required />
+          </div>
+          <div>
+            <label htmlFor="correo" className={labelClass}>Correo</label>
+            <input id="correo" name="correo" type="email" value={form.correo} onChange={handleChange} placeholder="correo@ejemplo.com" required />
+          </div>
+          <div>
+            <label htmlFor="direccion" className={labelClass}>Dirección</label>
+            <input id="direccion" name="direccion" type="text" value={form.direccion} onChange={handleChange} placeholder="San Salvador" required />
+          </div>
+          <div>
+            <label htmlFor="dui" className={labelClass}>DUI</label>
+            <input id="dui" name="dui" type="text" value={form.dui} onChange={handleChange} placeholder="00000000-0" required />
+          </div>
+          <div>
+            <label htmlFor="password" className={labelClass}>Contraseña</label>
+            <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Mínimo 6 caracteres" required minLength={6} />
+          </div>
+          <div>
+            <label htmlFor="confirmPassword" className={labelClass}>Repetir contraseña</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} placeholder="Repite tu contraseña" required />
+          </div>
 
-        <div>
-          <label htmlFor="apellidos" className="block text-sm font-medium text-gray-700 mb-1">
-            Apellidos *
-          </label>
-          <input
-            id="apellidos"
-            name="apellidos"
-            type="text"
-            value={form.apellidos}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Ej. Pérez López"
-            required
-          />
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Registrando...' : 'Registrarme'}
+          </button>
+        </form>
 
-        <div>
-          <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-1">
-            Teléfono *
-          </label>
-          <input
-            id="telefono"
-            name="telefono"
-            type="tel"
-            value={form.telefono}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Ej. 7000-0000"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="correo" className="block text-sm font-medium text-gray-700 mb-1">
-            Correo *
-          </label>
-          <input
-            id="correo"
-            name="correo"
-            type="email"
-            value={form.correo}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="correo@ejemplo.com"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="direccion" className="block text-sm font-medium text-gray-700 mb-1">
-            Dirección *
-          </label>
-          <input
-            id="direccion"
-            name="direccion"
-            type="text"
-            value={form.direccion}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Ej. San Salvador"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="dui" className="block text-sm font-medium text-gray-700 mb-1">
-            DUI *
-          </label>
-          <input
-            id="dui"
-            name="dui"
-            type="text"
-            value={form.dui}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Ej. 00000000-0"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Contraseña *
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Mínimo 6 caracteres"
-            required
-            minLength={6}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-            Repetir contraseña *
-          </label>
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Repite tu contraseña"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2.5 px-4 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Registrando...' : 'Registrarme'}
-        </button>
-      </form>
-
-      <p className="mt-4 text-center text-gray-600 text-sm">
-        ¿Ya tienes cuenta?{' '}
-        <Link to="/iniciar-sesion" className="text-orange-600 hover:text-orange-700 font-medium">
-          Iniciar sesión
-        </Link>
-      </p>
+        <p className="mt-6 text-center text-sm text-slate-600">
+          ¿Ya tienes cuenta?{' '}
+          <Link to="/iniciar-sesion" className="font-medium text-orange-600 hover:text-orange-700">
+            Iniciar sesión
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

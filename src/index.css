@@ -1,7 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  @apply min-h-screen antialiased;
+  @apply min-h-screen antialiased text-gray-900 bg-slate-50;
+}
+
+/* Inputs consistentes */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+select {
+  @apply w-full px-4 py-2.5 text-gray-900 border border-gray-300 rounded-lg bg-white
+    placeholder:text-gray-400
+    focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500
+    transition;
 }

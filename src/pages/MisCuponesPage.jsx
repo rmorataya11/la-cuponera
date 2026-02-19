@@ -48,24 +48,20 @@ export default function MisCuponesPage() {
   }, [user?.uid]);
 
   const { disponibles, canjeados, vencidos } = clasificarCupones(cupones);
-  const listByTab = {
-    disponibles,
-    canjeados,
-    vencidos,
-  };
+  const listByTab = { disponibles, canjeados, vencidos };
   const list = listByTab[tab] || [];
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <p className="text-gray-500">Cargando tus cupones...</p>
+      <div className="flex justify-center py-16">
+        <div className="text-slate-500 text-sm font-medium">Cargando tus cupones...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 rounded-lg bg-red-100 text-red-700">
+      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700 text-sm">
         {error}
       </div>
     );
@@ -73,18 +69,18 @@ export default function MisCuponesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Mis cupones</h1>
+      <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Mis cupones</h1>
 
-      <div className="flex gap-2 border-b border-gray-200 mb-6">
+      <div className="flex gap-0.5 p-1 bg-slate-100 rounded-lg mb-6 w-fit">
         {TABS.map(({ key, label }) => (
           <button
             key={key}
             type="button"
             onClick={() => setTab(key)}
-            className={`px-4 py-2 font-medium rounded-t-lg transition ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-md transition ${
               tab === key
-                ? 'bg-orange-100 text-orange-700 border-b-2 border-orange-600 -mb-px'
-                : 'text-gray-600 hover:text-orange-600 hover:bg-gray-100'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             {label} ({listByTab[key].length})
@@ -93,34 +89,32 @@ export default function MisCuponesPage() {
       </div>
 
       {list.length === 0 ? (
-        <p className="text-gray-600">No tienes cupones en esta categoría.</p>
+        <div className="rounded-xl bg-white border border-slate-200 p-8 text-center text-slate-600">
+          No tienes cupones en esta categoría.
+        </div>
       ) : (
         <ul className="space-y-4">
           {list.map((c) => (
             <li
               key={c.id}
-              className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+              className="bg-white rounded-xl border border-slate-200/80 shadow-card p-5 flex flex-wrap items-center justify-between gap-4"
             >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-mono font-semibold text-gray-800">{c.codigo}</p>
-                  <p className="text-gray-600 mt-1">
-                    {ofertasMap[c.ofertaId]?.titulo ?? 'Oferta'}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Comprado: {c.fechaCompra} · Válido hasta: {c.fechaLimiteUso}
-                  </p>
-                </div>
-                {tab === 'disponibles' && (
-                  <button
-                    type="button"
-                    onClick={() => descargarPdfCupon(c, ofertasMap[c.ofertaId])}
-                    className="px-3 py-1.5 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50"
-                  >
-                    Descargar PDF
-                  </button>
-                )}
+              <div>
+                <p className="font-mono font-semibold text-slate-900">{c.codigo}</p>
+                <p className="text-slate-600 mt-0.5">{ofertasMap[c.ofertaId]?.titulo ?? 'Oferta'}</p>
+                <p className="text-sm text-slate-500 mt-2">
+                  Comprado: {c.fechaCompra} · Válido hasta: {c.fechaLimiteUso}
+                </p>
               </div>
+              {tab === 'disponibles' && (
+                <button
+                  type="button"
+                  onClick={() => descargarPdfCupon(c, ofertasMap[c.ofertaId])}
+                  className="shrink-0 px-4 py-2 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition"
+                >
+                  Descargar PDF
+                </button>
+              )}
             </li>
           ))}
         </ul>
