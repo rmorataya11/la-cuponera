@@ -14,10 +14,11 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Ofertas: solo lectura pública (la app filtra por estado "aprobada" y fechas vigentes).
+    // Ofertas: lectura pública. Solo usuarios autenticados pueden actualizar (ej. cuponesVendidos al comprar).
     match /ofertas/{ofertaId} {
       allow read: if true;
-      allow write: if false;
+      allow create, delete: if false;
+      allow update: if request.auth != null;
     }
 
     // Clientes: cada usuario solo accede a su propio documento (id = uid).

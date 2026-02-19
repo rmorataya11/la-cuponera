@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { getOfertaById, getEmpresaById, filterOfertasVigentes } from '../services/ofertasService';
+import { procesarCompra } from '../services/compraService';
 
 export default function ComprarPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [oferta, setOferta] = useState(null);
   const [empresa, setEmpresa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +19,7 @@ export default function ComprarPage() {
     cvv: '',
   });
   const [submitError, setSubmitError] = useState('');
-  const [validado, setValidado] = useState(false);
+  const [comprando, setComprando] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,7 +64,6 @@ export default function ComprarPage() {
       [name]: name === 'cantidad' ? (value === '' ? '' : Number(value)) : value,
     }));
     setSubmitError('');
-    setValidado(false);
   }
 
   function validarTarjeta() {
@@ -79,11 +82,15 @@ export default function ComprarPage() {
     return null;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setSubmitError('');
     if (!oferta || !vigente) {
       setSubmitError('La oferta ya no está disponible.');
+      return;
+    }
+    if (!user) {
+      setSubmitError('Debes iniciar sesión para comprar.');
       return;
     }
     if (form.cantidad < 1 || form.cantidad > maxCantidad) {
@@ -95,8 +102,22 @@ export default function ComprarPage() {
       setSubmitError(errTarjeta);
       return;
     }
-    setValidado(true);
-    // En 6.2 aquí se procesará la compra real (crear cupones, actualizar oferta).
+    setComprando(true);
+    try {
+      const empresaCodigo = empresa?.codigo ?? '';
+      await procesarCompra(
+        oferta.id,
+        user.uid,
+        form.cantidad,
+        oferta.fechaLimiteUso,
+        empresaCodigo
+      );
+      navigate('/mis-cupones', { replace: true });
+    } catch (err) {
+      setSubmitError(err.message || 'Error al procesar la compra. Intenta de nuevo.');
+    } finally {
+      setComprando(false);
+    }
   }
 
   if (loading) {
@@ -144,11 +165,6 @@ export default function ComprarPage() {
         {submitError && (
           <div className="p-3 rounded-lg bg-red-100 text-red-700 text-sm" role="alert">
             {submitError}
-          </div>
-        )}
-        {validado && (
-          <div className="p-3 rounded-lg bg-green-100 text-green-800 text-sm">
-            Datos válidos. En el siguiente paso se procesará la compra y se generarán los cupones.
           </div>
         )}
 
@@ -233,9 +249,10 @@ export default function ComprarPage() {
 
         <button
           type="submit"
-          className="w-full py-2.5 px-4 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          disabled={comprando}
+          className="w-full py-2.5 px-4 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Confirmar compra
+          {comprando ? 'Procesando compra...' : 'Confirmar compra'}
         </button>
       </form>
     </div>
