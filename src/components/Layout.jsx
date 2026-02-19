@@ -18,7 +18,7 @@ export default function Layout() {
             to="/"
             className="text-xl font-bold tracking-tight text-slate-900 hover:text-orange-600 transition"
           >
-            La Cuponera
+            Cuponía
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2">
             <Link
