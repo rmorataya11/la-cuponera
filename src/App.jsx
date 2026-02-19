@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import OfertasPage from './pages/OfertasPage';
 import RegistroPage from './pages/RegistroPage';
 import LoginPage from './pages/LoginPage';
+import MisCuponesPage from './pages/MisCuponesPage';
 
 function App() {
   return (
@@ -14,6 +16,14 @@ function App() {
           <Route path="ofertas" element={<OfertasPage />} />
           <Route path="registro" element={<RegistroPage />} />
           <Route path="iniciar-sesion" element={<LoginPage />} />
+          <Route
+            path="mis-cupones"
+            element={
+              <ProtectedRoute>
+                <MisCuponesPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

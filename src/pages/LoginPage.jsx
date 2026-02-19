@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ERROR_MESSAGES = {
@@ -12,6 +12,8 @@ const ERROR_MESSAGES = {
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({ correo: '', password: '' });
@@ -31,7 +33,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form.correo.trim(), form.password);
-      navigate('/', { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       const message = ERROR_MESSAGES[err.code] || err.message || 'Error al iniciar sesión.';
       setError(message);
