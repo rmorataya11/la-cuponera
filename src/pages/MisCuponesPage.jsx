@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getCuponesByClienteId, clasificarCupones } from '../services/cuponesService';
 import { getOfertaById } from '../services/ofertasService';
+import { descargarPdfCupon } from '../utils/generarPdfCupon';
 
 const TABS = [
   { key: 'disponibles', label: 'Disponibles' },
@@ -111,9 +112,13 @@ export default function MisCuponesPage() {
                   </p>
                 </div>
                 {tab === 'disponibles' && (
-                  <p className="text-sm text-orange-600 font-medium">
-                    Descargar PDF (próximo paso)
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => descargarPdfCupon(c, ofertasMap[c.ofertaId])}
+                    className="px-3 py-1.5 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50"
+                  >
+                    Descargar PDF
+                  </button>
                 )}
               </div>
             </li>
