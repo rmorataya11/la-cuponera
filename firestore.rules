@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Rubros: lectura pública (para filtrar ofertas). Escritura restringida.
+    match /rubros/{rubroId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Empresas: lectura pública (para mostrar datos en ofertas). Escritura restringida.
+    match /empresas/{empresaId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Ofertas: solo lectura pública (la app filtra por estado "aprobada" y fechas vigentes).
+    match /ofertas/{ofertaId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Clientes: cada usuario solo accede a su propio documento (id = uid).
+    match /clientes/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Cupones: el cliente solo lee los suyos y puede crear cupones con su propio clienteId.
+    match /cupones/{cuponId} {
+      allow read: if request.auth != null && resource.data.clienteId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.clienteId == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.clienteId == request.auth.uid;
+    }
+  }
+}
