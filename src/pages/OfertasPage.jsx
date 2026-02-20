@@ -48,15 +48,16 @@ export default function OfertasPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <div className="text-slate-500 text-sm font-medium">Cargando ofertas...</div>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-800 rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">Cargando ofertas...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700 text-sm">
+      <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error}
       </div>
     );
@@ -65,9 +66,9 @@ export default function OfertasPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Ofertas</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Ofertas</h1>
         <div className="flex items-center gap-2">
-          <label htmlFor="rubro" className="text-sm font-medium text-slate-700 whitespace-nowrap">
+          <label htmlFor="rubro" className="text-sm font-medium text-slate-600 whitespace-nowrap">
             Rubro
           </label>
           <select
@@ -87,25 +88,25 @@ export default function OfertasPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl bg-white border border-slate-200 p-8 text-center text-slate-600">
+        <div className="rounded-xl bg-white border border-slate-200/80 px-6 py-12 text-center text-slate-500 text-sm">
           No hay ofertas disponibles en este momento.
         </div>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((o) => (
             <Link
               key={o.id}
               to={`/ofertas/${o.id}`}
-              className="group block bg-white rounded-xl border border-slate-200/80 p-5 shadow-card hover:shadow-card-hover hover:border-orange-200/80 transition"
+              className="group block bg-white rounded-xl border border-slate-200/80 p-5 shadow-card hover:shadow-card-hover hover:border-slate-300/80 transition-all duration-150"
             >
-              <h2 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-orange-600 transition">
+              <h2 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-blue-800 transition-colors duration-150">
                 {o.titulo}
               </h2>
               {empresaMap[o.empresaId] && (
                 <p className="text-sm text-slate-500 mt-1">{empresaMap[o.empresaId]}</p>
               )}
               <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-xl font-bold text-orange-600">
+                <span className="text-xl font-semibold text-blue-800">
                   ${typeof o.precioOferta === 'number' ? o.precioOferta.toFixed(2) : o.precioOferta}
                 </span>
                 {typeof o.precioRegular === 'number' && (

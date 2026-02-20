@@ -53,15 +53,16 @@ export default function MisCuponesPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <div className="text-slate-500 text-sm font-medium">Cargando tus cupones...</div>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-800 rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">Cargando tus cupones...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700 text-sm">
+      <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error}
       </div>
     );
@@ -69,17 +70,17 @@ export default function MisCuponesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Mis cupones</h1>
+      <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-6">Mis cupones</h1>
 
-      <div className="flex gap-0.5 p-1 bg-slate-100 rounded-lg mb-6 w-fit">
+      <div className="flex gap-0.5 p-1 bg-slate-100/80 rounded-lg mb-6 w-fit">
         {TABS.map(({ key, label }) => (
           <button
             key={key}
             type="button"
             onClick={() => setTab(key)}
-            className={`px-4 py-2.5 text-sm font-medium rounded-md transition ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 ${
               tab === key
-                ? 'bg-white text-slate-900 shadow-sm'
+                ? 'bg-white text-slate-900 shadow-card'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -89,20 +90,20 @@ export default function MisCuponesPage() {
       </div>
 
       {list.length === 0 ? (
-        <div className="rounded-xl bg-white border border-slate-200 p-8 text-center text-slate-600">
+        <div className="rounded-xl bg-white border border-slate-200/80 px-6 py-12 text-center text-slate-500 text-sm">
           No tienes cupones en esta categoría.
         </div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {list.map((c) => (
             <li
               key={c.id}
               className="bg-white rounded-xl border border-slate-200/80 shadow-card p-5 flex flex-wrap items-center justify-between gap-4"
             >
               <div>
-                <p className="font-mono font-semibold text-slate-900">{c.codigo}</p>
-                <p className="text-slate-600 mt-0.5">{ofertasMap[c.ofertaId]?.titulo ?? 'Oferta'}</p>
-                <p className="text-sm text-slate-500 mt-2">
+                <p className="font-mono font-semibold text-slate-900 text-sm">{c.codigo}</p>
+                <p className="text-slate-600 mt-0.5 text-sm">{ofertasMap[c.ofertaId]?.titulo ?? 'Oferta'}</p>
+                <p className="text-xs text-slate-500 mt-2">
                   Comprado: {c.fechaCompra} · Válido hasta: {c.fechaLimiteUso}
                 </p>
               </div>
@@ -110,7 +111,7 @@ export default function MisCuponesPage() {
                 <button
                   type="button"
                   onClick={() => descargarPdfCupon(c, ofertasMap[c.ofertaId])}
-                  className="shrink-0 px-4 py-2 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition"
+                  className="shrink-0 px-4 py-2 text-sm font-medium text-blue-800 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors duration-150"
                 >
                   Descargar PDF
                 </button>

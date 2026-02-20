@@ -71,16 +71,16 @@ export default function RegistroPage() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
+  const labelClass = 'block text-sm font-medium text-slate-600 mb-1.5';
 
   return (
     <div className="max-w-md mx-auto">
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Registro de cliente</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-6">Registro de cliente</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+            <div className="p-3 rounded-lg bg-red-50/80 border border-red-100 text-red-700 text-sm" role="alert">
               {error}
             </div>
           )}
@@ -124,15 +124,15 @@ export default function RegistroPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3 text-base"
           >
             {loading ? 'Registrando...' : 'Registrarme'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-slate-500">
           ¿Ya tienes cuenta?{' '}
-          <Link to="/iniciar-sesion" className="font-medium text-orange-600 hover:text-orange-700">
+          <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">
             Iniciar sesión
           </Link>
         </p>

@@ -45,17 +45,17 @@ export default function LoginPage() {
   return (
     <div className="max-w-md mx-auto">
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-6">Iniciar sesión</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-6">Iniciar sesión</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+            <div className="p-3 rounded-lg bg-red-50/80 border border-red-100 text-red-700 text-sm" role="alert">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="correo" className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label htmlFor="correo" className="block text-sm font-medium text-slate-600 mb-1.5">
               Correo
             </label>
             <input
@@ -70,7 +70,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-slate-600 mb-1.5">
               Contraseña
             </label>
             <input
@@ -87,15 +87,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3 text-base"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-slate-500">
           ¿No tienes cuenta?{' '}
-          <Link to="/registro" className="font-medium text-orange-600 hover:text-orange-700">
+          <Link to="/registro" className="font-medium text-blue-800 hover:text-blue-900">
             Regístrate
           </Link>
         </p>

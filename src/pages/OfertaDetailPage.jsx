@@ -54,17 +54,18 @@ export default function OfertaDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <div className="text-slate-500 text-sm font-medium">Cargando...</div>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-800 rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">Cargando...</p>
       </div>
     );
   }
 
   if (error || !oferta) {
     return (
-      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700">
+      <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-blue-800 hover:text-blue-900">
           ← Volver a ofertas
         </Link>
       </div>
@@ -75,7 +76,7 @@ export default function OfertaDetailPage() {
     <div className="max-w-2xl">
       <Link
         to="/ofertas"
-        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-orange-600 mb-6 transition"
+        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
       >
         ← Volver a ofertas
       </Link>
@@ -87,11 +88,11 @@ export default function OfertaDetailPage() {
               {rubro.nombre}
             </span>
           )}
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{oferta.titulo}</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">{oferta.titulo}</h1>
           {empresa && <p className="text-slate-600 mt-1">{empresa.nombre}</p>}
 
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-orange-600">
+            <span className="text-2xl font-semibold text-blue-800">
               ${typeof oferta.precioOferta === 'number' ? oferta.precioOferta.toFixed(2) : oferta.precioOferta}
             </span>
             {typeof oferta.precioRegular === 'number' && (
@@ -101,14 +102,14 @@ export default function OfertaDetailPage() {
 
           {oferta.descripcion && (
             <div className="mt-6 pt-6 border-t border-slate-100">
-              <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Descripción</h2>
-              <p className="text-slate-600 mt-2 whitespace-pre-wrap">{oferta.descripcion}</p>
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Descripción</h2>
+              <p className="text-slate-600 mt-2 whitespace-pre-wrap leading-relaxed">{oferta.descripcion}</p>
             </div>
           )}
           {oferta.otrosDetalles && (
             <div className="mt-4">
-              <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">Otros detalles</h2>
-              <p className="text-slate-600 mt-2 whitespace-pre-wrap">{oferta.otrosDetalles}</p>
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Otros detalles</h2>
+              <p className="text-slate-600 mt-2 whitespace-pre-wrap leading-relaxed">{oferta.otrosDetalles}</p>
             </div>
           )}
 
@@ -126,15 +127,15 @@ export default function OfertaDetailPage() {
             {puedeComprar ? (
               <Link
                 to={`/ofertas/${id}/comprar`}
-                className="inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition"
+                className="btn-primary px-6 py-3 text-base"
               >
                 Comprar cupón
               </Link>
             ) : !vigente ? (
-              <p className="text-slate-500">Esta oferta ya no está disponible.</p>
+              <p className="text-slate-500 text-sm">Esta oferta ya no está disponible.</p>
             ) : (
-              <p className="text-slate-600">
-                <Link to="/iniciar-sesion" className="font-medium text-orange-600 hover:text-orange-700">
+              <p className="text-slate-600 text-sm">
+                <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">
                   Inicia sesión
                 </Link>
                 {' '}para comprar esta oferta.

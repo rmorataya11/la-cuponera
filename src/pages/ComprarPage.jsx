@@ -120,21 +120,22 @@ export default function ComprarPage() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
+  const labelClass = 'block text-sm font-medium text-slate-600 mb-1.5';
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <div className="text-slate-500 text-sm font-medium">Cargando...</div>
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-800 rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">Cargando...</p>
       </div>
     );
   }
 
   if (error || !oferta) {
     return (
-      <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-red-700">
+      <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-blue-800 hover:text-blue-900">
           ← Volver a ofertas
         </Link>
       </div>
@@ -143,9 +144,9 @@ export default function ComprarPage() {
 
   if (!vigente) {
     return (
-      <div className="rounded-xl bg-white border border-slate-200 p-6 text-slate-600">
+      <div className="rounded-xl bg-white border border-slate-200/80 px-6 py-8 text-slate-600 text-sm">
         Esta oferta ya no está disponible para compra.
-        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-orange-600 hover:text-orange-700">
+        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-blue-800 hover:text-blue-900">
           ← Volver al detalle
         </Link>
       </div>
@@ -158,20 +159,20 @@ export default function ComprarPage() {
     <div className="max-w-lg">
       <Link
         to={`/ofertas/${id}`}
-        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-orange-600 mb-6 transition"
+        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
       >
         ← Volver al detalle
       </Link>
 
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Comprar cupón</h1>
-        <p className="text-slate-600 mt-1 mb-6">
+        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Comprar cupón</h1>
+        <p className="text-slate-600 mt-1 mb-6 text-sm">
           {oferta.titulo}{empresa ? ` · ${empresa.nombre}` : ''}
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {submitError && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm" role="alert">
+            <div className="p-3 rounded-lg bg-red-50/80 border border-red-100 text-red-700 text-sm" role="alert">
               {submitError}
             </div>
           )}
@@ -194,7 +195,7 @@ export default function ComprarPage() {
           </div>
 
           <div className="pt-5 border-t border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-3">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
               Datos de pago (simulación)
             </h2>
             <div className="space-y-4">
@@ -248,7 +249,7 @@ export default function ComprarPage() {
           <button
             type="submit"
             disabled={comprando}
-            className="w-full py-3 px-4 text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="btn-primary w-full py-3 text-base"
           >
             {comprando ? 'Procesando compra...' : 'Confirmar compra'}
           </button>
