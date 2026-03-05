@@ -39,6 +39,25 @@ export async function updateOfertaEstado(id, estado) {
   await updateDoc(ref, { estado });
 }
 
+export async function addOferta(data) {
+  const ref = await addDoc(collection(db, 'ofertas'), {
+    titulo: data.titulo || '',
+    precioRegular: Number(data.precioRegular) || 0,
+    precioOferta: Number(data.precioOferta) ?? Number(data.precioRegular) ?? 0,
+    fechaInicio: (data.fechaInicio || '').slice(0, 10),
+    fechaFin: (data.fechaFin || '').slice(0, 10),
+    fechaLimiteUso: (data.fechaLimiteUso || data.fechaFin || '').slice(0, 10),
+    cantidadLimite: data.cantidadLimite === '' || data.cantidadLimite == null ? null : Number(data.cantidadLimite),
+    descripcion: data.descripcion || '',
+    otrosDetalles: data.otrosDetalles || '',
+    estado: 'pendiente',
+    empresaId: data.empresaId || '',
+    rubroId: data.rubroId || '',
+    cuponesVendidos: 0,
+  });
+  return ref.id;
+}
+
 // --- Rubros (getRubros está en ofertasService; aquí añadimos write) ---
 
 export async function getRubros() {
@@ -49,8 +68,8 @@ export async function getRubros() {
 export async function addRubro(data) {
   const ref = await addDoc(collection(db, 'rubros'), {
     nombre: data.nombre || '',
+    activo: data.activo !== false,
     ...(data.icono != null && { icono: data.icono }),
-    ...(data.activo != null && { activo: data.activo }),
   });
   return ref.id;
 }
@@ -64,11 +83,25 @@ export async function updateRubro(id, data) {
   if (Object.keys(update).length) await updateDoc(ref, update);
 }
 
-// --- Empresas (solo lectura para el panel; ya existe getEmpresas en ofertasService) ---
+// --- Empresas ---
 
 export async function getEmpresas() {
   const snap = await getDocs(collection(db, 'empresas'));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+export async function addEmpresa(data) {
+  const ref = await addDoc(collection(db, 'empresas'), {
+    nombre: data.nombre || '',
+    codigo: (data.codigo || '').trim().toUpperCase().slice(0, 6),
+    direccion: data.direccion || '',
+    nombreContacto: data.nombreContacto || '',
+    telefono: data.telefono || '',
+    correo: (data.correo || '').trim(),
+    rubroId: data.rubroId || '',
+    porcentajeComision: Number(data.porcentajeComision) || 0,
+  });
+  return ref.id;
 }
 
 // --- Clientes (solo admin puede leer todos) ---

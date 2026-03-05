@@ -4,10 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import {
   getOfertasTodas,
   updateOfertaEstado,
+  addOferta,
   getRubros,
   addRubro,
   updateRubro,
   getEmpresas,
+  addEmpresa,
   getClientesTodos,
   getCuponesTodos,
 } from '../services/adminService';
@@ -44,74 +46,27 @@ function diasHasta(fechaStr) {
   return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 
-// --- Datos mock ---
-const MOCK_STATS = {
-  cupones: { total: 1284, hoy: 47, pct: 12, canjeados: 843 },
-  ingresos: { total: 384200, hoy: 14100, pct: 8 },
-  usuarios: { total: 3971, nuevos: 124, pct: 5 },
-  empresas: { total: 68, activas: 52 },
-};
-
-const MOCK_ACTIVIDAD = [
-  { label: 'Lun', cupones: 120, ingresos: 52000 },
-  { label: 'Mar', cupones: 98, ingresos: 44100 },
-  { label: 'Mié', cupones: 145, ingresos: 61200 },
-  { label: 'Jue', cupones: 132, ingresos: 55800 },
-  { label: 'Vie', cupones: 167, ingresos: 70100 },
-  { label: 'Sáb', cupones: 189, ingresos: 78900 },
-  { label: 'Dom', cupones: 47, ingresos: 14100 },
-];
-
-const MOCK_OFERTAS_INICIAL = [
-  { id: '1', empresa: 'Café Central', rubro: 'Restaurantes', titulo: '2x1 en desayunos', precio: 8.99, vendidos: 45, limite: 100, estado: 'pendiente', inicio: '2026-02-01', fin: '2026-03-15' },
-  { id: '2', empresa: 'Cine Max', rubro: 'Entretenimiento', titulo: 'Entrada + palomitas', precio: 12, vendidos: 89, limite: 150, estado: 'aprobada', inicio: '2026-02-10', fin: '2026-03-20' },
-  { id: '3', empresa: 'Spa Relax', rubro: 'Bienestar', titulo: 'Masaje 50% off', precio: 25, vendidos: 12, limite: 30, estado: 'pendiente', inicio: '2026-03-01', fin: '2026-03-31' },
-  { id: '4', empresa: 'Pizza House', rubro: 'Restaurantes', titulo: 'Pizza familiar', precio: 14.99, vendidos: 200, limite: 200, estado: 'aprobada', inicio: '2026-01-15', fin: '2026-03-10' },
-  { id: '5', empresa: 'Gym Fit', rubro: 'Deportes', titulo: 'Mes gratis', precio: 0, vendidos: 67, limite: 80, estado: 'aprobada', inicio: '2026-02-20', fin: '2026-04-01' },
-  { id: '6', empresa: 'Libros & Más', rubro: 'Cultura', titulo: '20% en libros', precio: 5, vendidos: 34, limite: null, estado: 'rechazada', inicio: '2026-02-01', fin: '2026-03-01' },
-  { id: '7', empresa: 'Florería', rubro: 'Otros', titulo: 'Ramo pequeño', precio: 9.99, vendidos: 8, limite: 50, estado: 'pendiente', inicio: '2026-03-01', fin: '2026-03-25' },
-  { id: '8', empresa: 'Tech Store', rubro: 'Electrónica', titulo: 'Cargador inalámbrico', precio: 15, vendidos: 22, limite: 60, estado: 'aprobada', inicio: '2026-02-15', fin: '2026-03-30' },
-];
-
-const MOCK_CUPONES = [
-  { codigo: 'CAF0012345678', cliente: 'Juan P.', nombre: '2x1 desayunos', oferta: 'Café Central', empresa: 'Café Central', estado: 'disponible', fecha: '2026-02-28', vence: '2026-03-10' },
-  { codigo: 'CIN0098765432', cliente: 'María G.', nombre: 'Entrada + palomitas', oferta: 'Cine Max', empresa: 'Cine Max', estado: 'canjeado', fecha: '2026-02-15', vence: '2026-03-20' },
-  { codigo: 'SPA0023456789', cliente: 'Carlos R.', nombre: 'Masaje 50%', oferta: 'Spa Relax', empresa: 'Spa Relax', estado: 'disponible', fecha: '2026-03-01', vence: '2026-03-05' },
-  { codigo: 'PIZ0034567890', cliente: 'Ana L.', nombre: 'Pizza familiar', oferta: 'Pizza House', empresa: 'Pizza House', estado: 'vencido', fecha: '2026-01-20', vence: '2026-02-28' },
-  { codigo: 'GYM0045678901', cliente: 'Luis M.', nombre: 'Mes gratis', oferta: 'Gym Fit', empresa: 'Gym Fit', estado: 'disponible', fecha: '2026-02-25', vence: '2026-03-08' },
-  { codigo: 'TEC0056789012', cliente: 'Sofia K.', nombre: 'Cargador inalámbrico', oferta: 'Tech Store', empresa: 'Tech Store', estado: 'disponible', fecha: '2026-03-02', vence: '2026-03-04' },
-  { codigo: 'CAF0067890123', cliente: 'Pedro S.', nombre: '2x1 desayunos', oferta: 'Café Central', empresa: 'Café Central', estado: 'disponible', fecha: '2026-02-20', vence: '2026-03-06' },
-];
-
-const MOCK_EMPRESAS = [
-  { id: 'e1', nombre: 'Café Central', rubro: 'Restaurantes', codigo: 'CAF001', comision: 15, cupones: 120, activa: true, contacto: 'contacto@cafecentral.com' },
-  { id: 'e2', nombre: 'Cine Max', rubro: 'Entretenimiento', codigo: 'CIN009', comision: 12, cupones: 340, activa: true, contacto: 'info@cinemax.com' },
-  { id: 'e3', nombre: 'Spa Relax', rubro: 'Bienestar', codigo: 'SPA002', comision: 20, cupones: 45, activa: true, contacto: 'hola@sparelax.com' },
-  { id: 'e4', nombre: 'Pizza House', rubro: 'Restaurantes', codigo: 'PIZ003', comision: 10, cupones: 520, activa: true, contacto: 'pedidos@pizzahouse.com' },
-  { id: 'e5', nombre: 'Libros & Más', rubro: 'Cultura', codigo: 'LIB007', comision: 8, cupones: 89, activa: false, contacto: 'ventas@librosymas.com' },
-];
-
-const MOCK_RUBROS = [
-  { id: 'r1', nombre: 'Restaurantes', icono: '🍽️', empresas: 12, ofertas: 28, activo: true },
-  { id: 'r2', nombre: 'Entretenimiento', icono: '🎬', empresas: 8, ofertas: 15, activo: true },
-  { id: 'r3', nombre: 'Bienestar', icono: '💆', empresas: 5, ofertas: 9, activo: true },
-  { id: 'r4', nombre: 'Deportes', icono: '⚽', empresas: 6, ofertas: 11, activo: true },
-  { id: 'r5', nombre: 'Cultura', icono: '📚', empresas: 4, ofertas: 7, activo: true },
-  { id: 'r6', nombre: 'Electrónica', icono: '📱', empresas: 3, ofertas: 5, activo: true },
-  { id: 'r7', nombre: 'Otros', icono: '📦', empresas: 10, ofertas: 18, activo: false },
-  { id: 'r8', nombre: 'Viajes', icono: '✈️', empresas: 2, ofertas: 3, activo: false },
-];
-
-const MOCK_CLIENTES = [
-  { id: 'c1', nombre: 'Juan Pérez', email: 'juan@mail.com', cupones: 5, gasto: 89.95, registro: '2025-11-10', activo: true },
-  { id: 'c2', nombre: 'María García', email: 'maria@mail.com', cupones: 12, gasto: 156, registro: '2025-10-01', activo: true },
-  { id: 'c3', nombre: 'Carlos Rodríguez', email: 'carlos@mail.com', cupones: 3, gasto: 45, registro: '2026-01-15', activo: true },
-  { id: 'c4', nombre: 'Ana López', email: 'ana@mail.com', cupones: 8, gasto: 112, registro: '2025-12-20', activo: true },
-  { id: 'c5', nombre: 'Luis Martínez', email: 'luis@mail.com', cupones: 2, gasto: 25.98, registro: '2026-02-01', activo: true },
-  { id: 'c6', nombre: 'Sofia Kim', email: 'sofia@mail.com', cupones: 1, gasto: 15, registro: '2026-02-28', activo: true },
-  { id: 'c7', nombre: 'Pedro Sánchez', email: 'pedro@mail.com', cupones: 0, gasto: 0, registro: '2025-09-05', activo: false },
-  { id: 'c8', nombre: 'Laura Díaz', email: 'laura@mail.com', cupones: 7, gasto: 98, registro: '2025-11-22', activo: true },
-];
+/** Actividad de los últimos 7 días a partir de cupones (fechaCompra o fecha). */
+function actividadDesdeCupones(cupones) {
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const hoy = new Date();
+  const porDia = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    porDia[key] = { label: dias[d.getDay()], cupones: 0, ingresos: 0 };
+  }
+  for (const c of cupones) {
+    const fecha = (c.fechaCompra || c.fecha || '').toString().slice(0, 10);
+    if (porDia[fecha]) {
+      porDia[fecha].cupones += 1;
+    }
+  }
+  return Object.keys(porDia)
+    .sort()
+    .map((k) => porDia[k]);
+}
 
 function mapOfertasParaUI(ofertas, empresas, rubros) {
   return ofertas.map((o) => {
@@ -341,14 +296,33 @@ export default function CuponiaAdminDashboard() {
                 <RubrosSection
                   rubros={rubros}
                   setRubros={setRubros}
-                  onRefetch={() => {
-                    getRubros().then(setRubros);
+                  onRefetch={async () => {
+                    const list = await getRubros();
+                    setRubros(list);
                   }}
                 />
               )}
-              {activeTab === 'empresas' && <EmpresasSection empresas={empresas} rubros={rubros} />}
+              {activeTab === 'empresas' && (
+                <EmpresasSection
+                  empresas={empresas}
+                  rubros={rubros}
+                  onRefetch={async () => {
+                    const list = await getEmpresas();
+                    setEmpresas(list);
+                  }}
+                />
+              )}
               {activeTab === 'ofertas' && (
-                <OfertasSection ofertas={ofertas} setOfertas={setOfertas} />
+                <OfertasSection
+                  ofertas={ofertas}
+                  setOfertas={setOfertas}
+                  empresas={empresas}
+                  rubros={rubros}
+                  onRefetch={async () => {
+                    const raw = await getOfertasTodas();
+                    setOfertas(mapOfertasParaUI(raw, empresas, rubros));
+                  }}
+                />
               )}
               {activeTab === 'clientes' && (
                 <ClientesSection clientes={clientes} cupones={cupones} />
@@ -600,11 +574,19 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-4">Actividad semanal</h3>
-          <MiniBarChart data={MOCK_ACTIVIDAD} />
-          <div className="mt-4 flex justify-between text-sm text-slate-500">
-            <span>Cupones: {MOCK_ACTIVIDAD.reduce((s, d) => s + d.cupones, 0)}</span>
-            <span>Ingresos: ${MOCK_ACTIVIDAD.reduce((s, d) => s + (d.ingresos || 0), 0).toLocaleString()}</span>
-          </div>
+          {(() => {
+            const actividad = actividadDesdeCupones(cupones);
+            const totalCuponesSemana = actividad.reduce((s, d) => s + d.cupones, 0);
+            return (
+              <>
+                <MiniBarChart data={actividad} />
+                <div className="mt-4 flex justify-between text-sm text-slate-500">
+                  <span>Cupones: {totalCuponesSemana}</span>
+                  <span>Últimos 7 días</span>
+                </div>
+              </>
+            );
+          })()}
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-4">Pendientes</h3>
@@ -687,9 +669,55 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
 }
 
 // --- Sección Ofertas ---
-function OfertasSection({ ofertas, setOfertas }) {
+function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRefetch }) {
   const [filtro, setFiltro] = useState('todas');
   const [modal, setModal] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    empresaId: '',
+    rubroId: '',
+    titulo: '',
+    precioRegular: '',
+    precioOferta: '',
+    fechaInicio: '',
+    fechaFin: '',
+    fechaLimiteUso: '',
+    cantidadLimite: '',
+    descripcion: '',
+    otrosDetalles: '',
+  });
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === 'empresaId') {
+      const emp = empresas.find((x) => x.id === value);
+      setForm((prev) => ({ ...prev, rubroId: emp?.rubroId ?? prev.rubroId }));
+    }
+    setError('');
+  };
+
+  const handleCreateOferta = async (e) => {
+    e.preventDefault();
+    if (!form.titulo.trim()) { setError('El título es obligatorio.'); return; }
+    if (!form.empresaId) { setError('Elegí una empresa.'); return; }
+    if (!form.rubroId) { setError('Elegí un rubro.'); return; }
+    setError('');
+    setSaving(true);
+    try {
+      await addOferta(form);
+      setForm({ empresaId: '', rubroId: '', titulo: '', precioRegular: '', precioOferta: '', fechaInicio: '', fechaFin: '', fechaLimiteUso: '', cantidadLimite: '', descripcion: '', otrosDetalles: '' });
+      setShowForm(false);
+      await onRefetch?.();
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'No se pudo crear la oferta.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const filtradas = filtro === 'todas'
     ? ofertas
@@ -718,7 +746,7 @@ function OfertasSection({ ofertas, setOfertas }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {FILTROS.map((f) => (
           <button
             key={f.id}
@@ -734,7 +762,86 @@ function OfertasSection({ ofertas, setOfertas }) {
             {f.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => { setShowForm((v) => !v); setError(''); }}
+          className="px-4 py-2 rounded-lg text-white font-medium"
+          style={{ backgroundColor: PRIMARY }}
+        >
+          {showForm ? 'Cancelar' : 'Crear oferta'}
+        </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleCreateOferta} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 max-w-2xl">
+          {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm" role="alert">{error}</div>}
+          <h3 className="font-bold text-slate-900">Nueva oferta</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Empresa *</label>
+              <select name="empresaId" value={form.empresaId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+                <option value="">Elegir empresa</option>
+                {empresas.map((emp) => (
+                  <option key={emp.id} value={emp.id}>{emp.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Rubro *</label>
+              <select name="rubroId" value={form.rubroId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+                <option value="">Elegir rubro</option>
+                {rubros.filter((r) => r.activo !== false).map((r) => (
+                  <option key={r.id} value={r.id}>{r.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Título *</label>
+              <input type="text" name="titulo" value={form.titulo} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. 2x1 en desayunos" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio regular</label>
+              <input type="number" name="precioRegular" value={form.precioRegular} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio oferta</label>
+              <input type="number" name="precioOferta" value={form.precioOferta} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha inicio</label>
+              <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha fin</label>
+              <input type="date" name="fechaFin" value={form.fechaFin} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha límite uso cupón</label>
+              <input type="date" name="fechaLimiteUso" value={form.fechaLimiteUso} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Límite cupones (vacío = sin límite)</label>
+              <input type="number" name="cantidadLimite" value={form.cantidadLimite} onChange={handleFormChange} min={0} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Opcional" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Descripción</label>
+              <textarea name="descripcion" value={form.descripcion} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Otros detalles</label>
+              <textarea name="otrosDetalles" value={form.otrosDetalles} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50" style={{ backgroundColor: PRIMARY }}>
+              {saving ? 'Guardando...' : 'Crear oferta (pendiente de aprobación)'}
+            </button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 font-medium hover:bg-slate-200">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      )}
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
@@ -920,16 +1027,34 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
   const [editandoId, setEditandoId] = useState(null);
   const [editValor, setEditValor] = useState('');
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const agregar = async () => {
-    if (!nuevoNombre.trim()) return;
+    const nombre = nuevoNombre.trim();
+    if (!nombre) {
+      setError('Escribí el nombre del rubro.');
+      return;
+    }
+    setError('');
     setSaving(true);
     try {
-      await addRubro({ nombre: nuevoNombre.trim() });
+      await addRubro({ nombre });
       setNuevoNombre('');
-      onRefetch?.();
+      try {
+        await onRefetch?.();
+      } catch (refetchErr) {
+        console.warn('Refetch después de agregar:', refetchErr);
+        setError('Rubro guardado correctamente. Si no aparece en la lista, recargá la página.');
+      }
     } catch (e) {
-      console.error(e);
+      console.error('Error al agregar rubro:', e);
+      const msg = e?.message || String(e);
+      const isPermission = e?.code === 'permission-denied' || /permission|insufficient|denied/i.test(msg);
+      setError(
+        isPermission
+          ? 'Sin permiso para escribir en Firestore. Revisá que tu usuario esté en la colección "admins" (documento con ID = tu UID) y que hayas publicado las reglas de Firestore.'
+          : msg || 'No se pudo guardar el rubro.'
+      );
     } finally {
       setSaving(false);
     }
@@ -937,12 +1062,14 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
 
   const toggleActivo = async (r) => {
     const nuevoActivo = !(r.activo !== false);
+    setError('');
     setSaving(true);
     try {
       await updateRubro(r.id, { activo: nuevoActivo });
-      setRubros((prev) => prev.map((x) => (x.id === r.id ? { ...x, activo: nuevoActivo } : x)));
+      await onRefetch?.();
     } catch (e) {
       console.error(e);
+      setError(e?.message || 'No se pudo actualizar.');
     } finally {
       setSaving(false);
     }
@@ -954,12 +1081,14 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
       setEditValor('');
       return;
     }
+    setError('');
     setSaving(true);
     try {
       await updateRubro(id, { nombre: editValor.trim() });
-      setRubros((prev) => prev.map((x) => (x.id === id ? { ...x, nombre: editValor.trim() } : x)));
+      await onRefetch?.();
     } catch (e) {
       console.error(e);
+      setError(e?.message || 'No se pudo guardar el cambio.');
     } finally {
       setEditandoId(null);
       setEditValor('');
@@ -978,22 +1107,30 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
+      {error && (
+        <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-red-800 text-sm" role="alert">
+          {error}
+        </div>
+      )}
+      <p className="text-slate-500 text-sm">Escribí el nombre del rubro y hacé clic en Agregar. Se guarda en Firebase.</p>
+      <div className="flex flex-wrap items-center gap-2">
         <input
           type="text"
           placeholder="Nombre del rubro..."
           value={nuevoNombre}
-          onChange={(e) => setNuevoNombre(e.target.value)}
+          onChange={(e) => { setNuevoNombre(e.target.value); setError(''); }}
           onKeyDown={(e) => e.key === 'Enter' && agregar()}
-          className="flex-1 max-w-xs px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none"
+          className="flex-1 min-w-[200px] max-w-xs px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none focus:ring-1 focus:ring-[#2d3fc2]/30"
+          disabled={saving}
         />
         <button
           type="button"
           onClick={agregar}
-          className="px-4 py-2 rounded-lg text-white font-medium"
+          disabled={saving}
+          className="px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: PRIMARY }}
         >
-          Agregar
+          {saving ? 'Guardando...' : 'Agregar'}
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -1045,7 +1182,52 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
 }
 
 // --- Sección Empresas ---
-function EmpresasSection({ empresas = [], rubros = [] }) {
+function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [form, setForm] = useState({
+    nombre: '',
+    codigo: '',
+    direccion: '',
+    nombreContacto: '',
+    telefono: '',
+    correo: '',
+    rubroId: '',
+    porcentajeComision: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.nombre.trim()) {
+      setError('El nombre es obligatorio.');
+      return;
+    }
+    if (!form.rubroId) {
+      setError('Elegí un rubro.');
+      return;
+    }
+    setError('');
+    setSaving(true);
+    try {
+      await addEmpresa(form);
+      setForm({ nombre: '', codigo: '', direccion: '', nombreContacto: '', telefono: '', correo: '', rubroId: '', porcentajeComision: '' });
+      setShowForm(false);
+      await onRefetch?.();
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'No se pudo guardar la empresa.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const empresasConDisplay = empresas.map((e) => ({
     ...e,
     rubro: rubros.find((r) => r.id === e.rubroId)?.nombre ?? e.rubroId ?? '—',
@@ -1054,28 +1236,91 @@ function EmpresasSection({ empresas = [], rubros = [] }) {
     activa: e.activa !== false,
     contacto: e.correo ?? e.contacto ?? '—',
   }));
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {empresasConDisplay.map((e) => (
-        <div key={e.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <span className={`w-2 h-2 rounded-full ${e.activa ? 'bg-green-400' : 'bg-slate-300'}`} />
-            <h3 className="font-bold text-slate-900">{e.nombre}</h3>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => { setShowForm((v) => !v); setError(''); }}
+          className="px-4 py-2 rounded-lg text-white font-medium"
+          style={{ backgroundColor: PRIMARY }}
+        >
+          {showForm ? 'Cancelar' : 'Agregar empresa'}
+        </button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 max-w-xl">
+          {error && <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm" role="alert">{error}</div>}
+          <h3 className="font-bold text-slate-900">Nueva empresa</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Nombre *</label>
+              <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. Café Central" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Código (3 letras + 3 números)</label>
+              <input type="text" name="codigo" value={form.codigo} onChange={handleChange} maxLength={6} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900 font-mono" placeholder="Ej. CAF001" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Dirección</label>
+              <input type="text" name="direccion" value={form.direccion} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Dirección" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Nombre contacto</label>
+              <input type="text" name="nombreContacto" value={form.nombreContacto} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Teléfono</label>
+              <input type="text" name="telefono" value={form.telefono} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Correo</label>
+              <input type="email" name="correo" value={form.correo} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Rubro *</label>
+              <select name="rubroId" value={form.rubroId} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+                <option value="">Elegir rubro</option>
+                {rubros.filter((r) => r.activo !== false).map((r) => (
+                  <option key={r.id} value={r.id}>{r.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">% Comisión</label>
+              <input type="number" name="porcentajeComision" value={form.porcentajeComision} onChange={handleChange} min={0} max={100} step={0.5} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+            </div>
           </div>
-          <p className="text-sm text-slate-500 mb-2">{e.rubro}</p>
-          <span className="inline-block px-2 py-1 rounded bg-slate-100 font-mono text-slate-600 text-xs">{e.codigo}</span>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="bg-blue-50 rounded-lg p-3 text-blue-700 text-sm font-medium">{e.cupones} cupones</div>
-            <div className="bg-green-50 rounded-lg p-3 text-green-700 text-sm font-medium">{e.comision}% comisión</div>
-          </div>
-          <p className="text-xs text-slate-400 mt-3 truncate">{e.contacto}</p>
-          <div className="mt-4">
-            <button type="button" className="px-3 py-1.5 rounded-lg text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm">
-              Ver detalle
+          <div className="flex gap-2">
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg text-white font-medium disabled:opacity-50" style={{ backgroundColor: PRIMARY }}>
+              {saving ? 'Guardando...' : 'Guardar empresa'}
+            </button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 font-medium hover:bg-slate-200">
+              Cancelar
             </button>
           </div>
-        </div>
-      ))}
+        </form>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {empresasConDisplay.map((e) => (
+          <div key={e.id} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`w-2 h-2 rounded-full ${e.activa ? 'bg-green-400' : 'bg-slate-300'}`} />
+              <h3 className="font-bold text-slate-900">{e.nombre}</h3>
+            </div>
+            <p className="text-sm text-slate-500 mb-2">{e.rubro}</p>
+            <span className="inline-block px-2 py-1 rounded bg-slate-100 font-mono text-slate-600 text-xs">{e.codigo}</span>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="bg-blue-50 rounded-lg p-3 text-blue-700 text-sm font-medium">{e.cupones} cupones</div>
+              <div className="bg-green-50 rounded-lg p-3 text-green-700 text-sm font-medium">{e.comision}% comisión</div>
+            </div>
+            <p className="text-xs text-slate-400 mt-3 truncate">{e.contacto}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
