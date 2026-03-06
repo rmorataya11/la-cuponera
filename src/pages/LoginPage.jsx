@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { isAdmin } from '../services/adminService';
+import { getRolUsuario } from '../services/rolesService';
 
 const ERROR_MESSAGES = {
   'auth/invalid-credential': 'Correo o contraseña incorrectos.',
@@ -19,6 +19,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [form, setForm] = useState({ correo: '', password: '' });
 
+  useEffect(() => {
+    const msg = location.state?.message;
+    if (msg) {
+      setError(msg);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
+
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError('');
@@ -34,8 +42,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const cred = await login(form.correo.trim(), form.password);
-      const admin = cred?.user?.uid ? await isAdmin(cred.user.uid) : false;
-      navigate(admin ? '/admin' : from, { replace: true });
+      const uid = cred?.user?.uid;
+      const email = cred?.user?.email ?? form.correo?.trim();
+      const rol = uid ? await getRolUsuario(uid, email) : 'cliente';
+      const to = rol === 'admin' ? '/admin' : rol === 'adminEmpresa' ? '/panel-empresa' : rol === 'empleado' ? '/canjear' : from;
+      navigate(to, { replace: true });
     } catch (err) {
       const message = ERROR_MESSAGES[err.code] || err.message || 'Error al iniciar sesión.';
       setError(message);
@@ -72,9 +83,14 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-600 mb-1.5">
-              Contraseña
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-600">
+                Contraseña
+              </label>
+              <Link to="/restablecer-contrasena" className="text-sm text-blue-800 hover:text-blue-900 font-medium">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
             <input
               id="password"
               name="password"
@@ -100,6 +116,13 @@ export default function LoginPage() {
           <Link to="/registro" className="font-medium text-blue-800 hover:text-blue-900">
             Regístrate
           </Link>
+        </p>
+        <p className="mt-3 text-center text-sm text-slate-500">
+          ¿Sos una empresa? Iniciá sesión aquí con el correo de tu empresa. Si aún no activaste tu cuenta,{' '}
+          <Link to="/activar-empresa" className="font-medium text-blue-800 hover:text-blue-900">
+            activala
+          </Link>
+          .
         </p>
       </div>
     </div>

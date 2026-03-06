@@ -3,9 +3,13 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  where,
+  limit,
   setDoc,
   updateDoc,
   addDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
@@ -44,6 +48,15 @@ export async function uploadOfertaImagen(file) {
 
 export async function getOfertasTodas() {
   const snap = await getDocs(collection(db, 'ofertas'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+/** Ofertas de una empresa (para panel admin empresa). */
+export async function getOfertasPorEmpresa(empresaId) {
+  if (!empresaId) return [];
+  const snap = await getDocs(
+    query(collection(db, 'ofertas'), where('empresaId', '==', empresaId))
+  );
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
@@ -123,6 +136,21 @@ export async function getEmpresas() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+/** Empresa cuyo admin es el usuario (adminUid === uid). Devuelve null si no hay. */
+export async function getEmpresaByAdminUid(uid) {
+  if (!uid) return null;
+  const snap = await getDocs(
+    query(
+      collection(db, 'empresas'),
+      where('adminUid', '==', uid),
+      limit(1)
+    )
+  );
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  return { id: d.id, ...d.data() };
+}
+
 export async function addEmpresa(data) {
   const ref = await addDoc(collection(db, 'empresas'), {
     nombre: data.nombre || '',
@@ -137,7 +165,63 @@ export async function addEmpresa(data) {
   return ref.id;
 }
 
-// --- Clientes (solo admin puede leer todos) ---
+// --- Empleados (admin o admin de empresa para su empresa) ---
+
+export async function getEmpleadosPorEmpresa(empresaId) {
+  if (!empresaId) return [];
+  const snap = await getDocs(
+    query(collection(db, 'empleados'), where('empresaId', '==', empresaId))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+export async function addEmpleado(data) {
+  const empresaId = (data.empresaId && String(data.empresaId).trim()) || null;
+  if (!empresaId) throw new Error('empresaId es requerido para agregar un empleado.');
+  const ref = await addDoc(collection(db, 'empleados'), {
+    empresaId,
+    nombres: (data.nombres || '').trim(),
+    apellidos: (data.apellidos || '').trim(),
+    correo: (data.correo || '').trim().toLowerCase(),
+    uid: data.uid || null,
+  });
+  return ref.id;
+}
+
+export async function updateEmpleado(id, data) {
+  const ref = doc(db, 'empleados', id);
+  const updates = {
+    nombres: (data.nombres || '').trim(),
+    apellidos: (data.apellidos || '').trim(),
+    correo: (data.correo || '').trim().toLowerCase(),
+  };
+  if (data.uid !== undefined) updates.uid = data.uid;
+  await updateDoc(ref, updates);
+}
+
+/** Solo actualiza el campo uid del empleado (para vincular cuenta Auth). Lo debe llamar el propio usuario recién creado. */
+export async function setEmpleadoUid(empleadoId, uid) {
+  await updateDoc(doc(db, 'empleados', empleadoId), { uid });
+}
+
+export async function deleteEmpleado(id) {
+  await deleteDoc(doc(db, 'empleados', id));
+}
+
+// --- Clientes (solo admin puede leer todos; el cliente puede leer su propio doc) ---
+
+/** Obtiene un cliente por uid. El propio cliente puede leer su doc. */
+export async function getClienteByUid(uid) {
+  if (!uid) return null;
+  const snap = await getDoc(doc(db, 'clientes', uid));
+  if (!snap.exists()) return null;
+  const d = snap.data();
+  return {
+    id: snap.id,
+    ...d,
+    nombre: [d.nombres, d.apellidos].filter(Boolean).join(' ') || d.correo || snap.id,
+  };
+}
 
 export async function getClientesTodos() {
   const snap = await getDocs(collection(db, 'clientes'));
@@ -158,4 +242,25 @@ export async function getCuponesTodos() {
     vence: d.data().fechaLimiteUso,
     fecha: d.data().fechaCompra,
   }));
+}
+
+/**
+ * Asigna empresaId a cupones que lo tienen null, tomándolo de la oferta.
+ * Solo admin. Devuelve cuántos cupones se actualizaron.
+ */
+export async function asignarEmpresaIdACuponesSinEmpresa() {
+  const cuponesRaw = await getCuponesTodos();
+  const sinEmpresa = cuponesRaw.filter((c) => c.empresaId == null || c.empresaId === '');
+  let actualizados = 0;
+  for (const c of sinEmpresa) {
+    if (!c.ofertaId) continue;
+    const ofertaSnap = await getDoc(doc(db, 'ofertas', c.ofertaId));
+    if (!ofertaSnap.exists()) continue;
+    let empresaId = ofertaSnap.data().empresaId;
+    if (empresaId == null || empresaId === '') continue;
+    if (empresaId === 'empresal') empresaId = 'empresa1';
+    await updateDoc(doc(db, 'cupones', c.id), { empresaId });
+    actualizados += 1;
+  }
+  return actualizados;
 }

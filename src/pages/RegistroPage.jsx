@@ -136,6 +136,11 @@ export default function RegistroPage() {
             Iniciar sesión
           </Link>
         </p>
+        <p className="mt-2 text-center text-sm text-slate-500">
+          <Link to="/restablecer-contrasena" className="font-medium text-blue-800 hover:text-blue-900">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
       </div>
     </div>
   );

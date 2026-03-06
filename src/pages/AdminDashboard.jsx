@@ -14,6 +14,7 @@ import {
   addEmpresa,
   getClientesTodos,
   getCuponesTodos,
+  asignarEmpresaIdACuponesSinEmpresa,
 } from '../services/adminService';
 
 // --- Paleta (valores que Tailwind no cubre) ---
@@ -130,7 +131,6 @@ function mapOfertasParaUI(ofertas, empresas, rubros) {
       estado: (o.estado || 'pendiente').toLowerCase(),
       inicio: o.fechaInicio,
       fin: o.fechaFin,
-      fechaLimiteUso: o.fechaLimiteUso,
       // Campos para editar
       empresaId: o.empresaId ?? '',
       rubroId: o.rubroId ?? '',
@@ -152,8 +152,6 @@ export default function CuponiaAdminDashboard() {
   const { user, logout } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const profileRef = useRef(null);
   const [ofertas, setOfertas] = useState([]);
   const [rubros, setRubros] = useState([]);
   const [empresas, setEmpresas] = useState([]);
@@ -190,26 +188,12 @@ export default function CuponiaAdminDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (profileRef.current && !profileRef.current.contains(e.target)) {
-        setProfileMenuOpen(false);
-      }
-    }
-    if (profileMenuOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [profileMenuOpen]);
-
   function handleLogout() {
     logout();
     navigate('/');
   }
 
   const ofertasPendientes = ofertas.filter((o) => o.estado === 'pendiente').length;
-
-  const sec = SECTION_TITLES[activeTab] ?? SECTION_TITLES.dashboard;
 
   return (
     <div className="flex min-h-screen bg-[#f1f5f9]" style={{ fontFamily: 'DM Sans, sans-serif' }}>
@@ -218,15 +202,9 @@ export default function CuponiaAdminDashboard() {
         className="flex flex-col bg-white border-r border-slate-200 shrink-0 transition-[width] duration-300 ease-in-out overflow-hidden"
         style={{ width: sidebarCollapsed ? 64 : 224 }}
       >
-        <div className="flex items-center gap-3 h-16 px-4 border-b border-slate-100 shrink-0">
-          <div
-            className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg"
-            style={{ backgroundColor: PRIMARY }}
-          >
-            C
-          </div>
+        <div className="flex items-center h-16 px-4 border-b border-slate-100 shrink-0 min-w-0">
           {!sidebarCollapsed && (
-            <div className="min-w-0">
+            <div>
               <p className="font-bold text-slate-900 truncate text-sm">Cuponia</p>
               <p className="text-xs text-slate-500 truncate">Panel de Administración</p>
             </div>
@@ -268,55 +246,8 @@ export default function CuponiaAdminDashboard() {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 shrink-0 flex items-center justify-between px-6 bg-white border-b border-slate-200 shadow-sm">
-          <div>
-            <h1 className="font-bold text-slate-900 text-lg">{sec.title}</h1>
-            <p className="text-xs text-slate-400">{sec.subtitle}</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative" ref={profileRef}>
-              <button
-                type="button"
-                onClick={() => setProfileMenuOpen((v) => !v)}
-                className="flex items-center gap-3 rounded-lg hover:bg-slate-50 p-1 -m-1 transition-colors"
-                aria-expanded={profileMenuOpen}
-                aria-haspopup="true"
-              >
-                <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-sm shrink-0"
-                  style={{ backgroundColor: PRIMARY }}
-                >
-                  A
-                </div>
-                <div className="hidden sm:block text-left">
-                  <p className="font-medium text-slate-900 text-sm">Admin</p>
-                  <p className="text-xs text-slate-400">{user?.email ?? 'admin@cuponia.com'}</p>
-                </div>
-              </button>
-              {profileMenuOpen && (
-                <div
-                  className="absolute right-0 top-full mt-2 w-48 py-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50"
-                  role="menu"
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setProfileMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
-                    role="menuitem"
-                  >
-                    Cerrar sesión
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-auto p-6 bg-[#f1f5f9]">
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        <main className="flex-1 overflow-auto p-4 md:p-6 bg-[#f1f5f9] min-h-0">
           {error && (
             <div className="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 text-red-800">
               {error}
@@ -374,7 +305,17 @@ export default function CuponiaAdminDashboard() {
                 <ClientesSection clientes={clientes} cupones={cupones} />
               )}
               {activeTab === 'cupones' && (
-                <CuponesSection cupones={cupones} ofertas={ofertas} clientes={clientes} />
+                <CuponesSection
+                  cupones={cupones}
+                  ofertas={ofertas}
+                  clientes={clientes}
+                  onAsignarEmpresaId={async () => {
+                    const n = await asignarEmpresaIdACuponesSinEmpresa();
+                    const raw = await getCuponesTodos();
+                    setCupones(raw);
+                    return n;
+                  }}
+                />
               )}
             </>
           )}
@@ -571,6 +512,13 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
   const top5Ofertas = [...ofertas].filter((o) => o.estado === 'aprobada').sort((a, b) => b.vendidos - a.vendidos).slice(0, 5);
   const maxVendidos = Math.max(...top5Ofertas.map((o) => o.vendidos), 1);
 
+  const ofertaById = Object.fromEntries(ofertas.map((o) => [o.id, o]));
+  const ingresosTotales = cupones.reduce((sum, c) => {
+    const oferta = ofertaById[c.ofertaId];
+    const precio = oferta != null ? (Number(oferta.precio) || Number(oferta.precioOferta) || 0) : 0;
+    return sum + precio;
+  }, 0);
+
   return (
     <div className="space-y-6">
       {ofertasPendientes > 0 && (
@@ -587,28 +535,28 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="bg-white border border-blue-200 rounded-2xl p-5 shadow-sm bg-blue-50/50">
-          <span className="text-2xl">🎟️</span>
-          <p className="text-2xl font-bold text-slate-900 mt-2">{cupones.length.toLocaleString()}</p>
-          <p className="text-slate-500 text-sm">Cupones vendidos</p>
-          <p className="text-slate-400 text-sm mt-1">{canjeados} canjeados</p>
+        <div className="rounded-2xl p-5 shadow-sm border border-blue-200 bg-blue-100">
+          <p className="text-2xl font-bold text-slate-900">{cupones.length.toLocaleString()}</p>
+          <p className="text-slate-600 text-sm mt-0.5 font-medium">Cupones vendidos</p>
+          <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
         </div>
-        <div className="bg-white border border-green-200 rounded-2xl p-5 shadow-sm bg-green-50/50">
-          <span className="text-2xl">💰</span>
-          <p className="text-2xl font-bold text-slate-900 mt-2">—</p>
-          <p className="text-slate-500 text-sm">Ingresos totales</p>
-          <p className="text-slate-400 text-sm mt-1">(no calculado)</p>
+        <div className="rounded-2xl p-5 shadow-sm border border-green-200 bg-green-100">
+          <p className="text-2xl font-bold text-slate-900">
+            {cupones.length > 0 ? `$${ingresosTotales.toLocaleString('es-SV', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+          </p>
+          <p className="text-slate-600 text-sm mt-0.5 font-medium">Ingresos totales</p>
+          <p className="text-slate-500 text-sm mt-0.5">
+            {cupones.length > 0 ? 'Por venta de cupones' : '(sin ventas)'}
+          </p>
         </div>
-        <div className="bg-white border border-violet-200 rounded-2xl p-5 shadow-sm bg-violet-50/50">
-          <span className="text-2xl">✅</span>
-          <p className="text-2xl font-bold text-slate-900 mt-2">{tasaCanje}%</p>
-          <p className="text-slate-500 text-sm">Tasa de canje</p>
-          <p className="text-slate-400 text-sm mt-1">{canjeados} canjeados</p>
+        <div className="rounded-2xl p-5 shadow-sm border border-violet-200 bg-violet-100">
+          <p className="text-2xl font-bold text-slate-900">{tasaCanje}%</p>
+          <p className="text-slate-600 text-sm mt-0.5 font-medium">Tasa de canje</p>
+          <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
         </div>
-        <div className="bg-white border border-sky-200 rounded-2xl p-5 shadow-sm bg-sky-50/50">
-          <span className="text-2xl">👥</span>
-          <p className="text-2xl font-bold text-slate-900 mt-2">{totalClientes.toLocaleString()}</p>
-          <p className="text-slate-500 text-sm">Usuarios registrados</p>
+        <div className="rounded-2xl p-5 shadow-sm border border-sky-200 bg-sky-100">
+          <p className="text-2xl font-bold text-slate-900">{totalClientes.toLocaleString()}</p>
+          <p className="text-slate-600 text-sm mt-0.5 font-medium">Usuarios registrados</p>
         </div>
       </div>
 
@@ -620,8 +568,8 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
         </div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="xl:col-span-2 min-w-0 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <div className="xl:col-span-2 min-w-0 bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h3 className="font-bold text-slate-900">Actividad</h3>
             <div className="flex rounded-lg bg-slate-100 p-0.5">
@@ -666,7 +614,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
             );
           })()}
         </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 shadow-sm">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-4">Pendientes</h3>
           {pendientes.length === 0 ? (
             <p className="text-slate-500 text-sm">No hay ofertas pendientes.</p>
@@ -701,8 +649,8 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-4">Top 5 ofertas</h3>
           <ul className="space-y-3">
             {top5Ofertas.map((o, i) => (
@@ -721,7 +669,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
             ))}
           </ul>
         </div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-4">Empresas por cupones</h3>
           <ul className="space-y-2">
             {empresas.slice(0, 5).map((e) => (
@@ -1164,9 +1112,12 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
 }
 
 // --- Sección Cupones ---
-function CuponesSection({ cupones = [], ofertas = [], clientes = [] }) {
+function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEmpresaId }) {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('todos');
+  const [asignando, setAsignando] = useState(false);
+  const [asignarMsg, setAsignarMsg] = useState(null);
+  const sinEmpresa = cupones.filter((c) => c.empresaId == null || c.empresaId === '');
   const venceStr = (c) => c.vence || c.fechaLimiteUso || '';
   const conDisplay = cupones.map((c) => ({
     ...c,
@@ -1187,8 +1138,42 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [] }) {
 
   const ESTADOS = [{ id: 'todos', label: 'Todos' }, { id: 'disponible', label: 'Disponible' }, { id: 'canjeado', label: 'Canjeado' }, { id: 'vencido', label: 'Vencido' }];
 
+  async function handleAsignarEmpresaId() {
+    if (!onAsignarEmpresaId) return;
+    setAsignando(true);
+    setAsignarMsg(null);
+    try {
+      const n = await onAsignarEmpresaId();
+      setAsignarMsg(n > 0 ? `Se asignó empresa a ${n} cupón(es). Los empleados ya pueden verlos en Canjear.` : 'No había cupones sin empresa para actualizar.');
+    } catch (err) {
+      setAsignarMsg(err?.message || 'Error al asignar.');
+    } finally {
+      setAsignando(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
+      {sinEmpresa.length > 0 && onAsignarEmpresaId && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-amber-800 text-sm">
+            {sinEmpresa.length} cupón(es) sin empresa asignada. Los empleados no los ven en la pantalla de canje.
+          </p>
+          <button
+            type="button"
+            onClick={handleAsignarEmpresaId}
+            disabled={asignando}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-amber-900 bg-amber-200 hover:bg-amber-300 disabled:opacity-50"
+          >
+            {asignando ? 'Asignando...' : 'Asignar empresa a estos cupones'}
+          </button>
+        </div>
+      )}
+      {asignarMsg && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-700">
+          {asignarMsg}
+        </div>
+      )}
       {urgentes.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-red-800 font-medium">{urgentes.length} cupón(es) por vencer en los próximos 7 días.</p>
@@ -1469,6 +1454,8 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
     cupones: e.cupones ?? 0,
     activa: e.activa !== false,
     contacto: e.correo ?? e.contacto ?? '—',
+    estado: (e.estado || 'aprobada').toLowerCase(),
+    sinCuentaVinculada: (e.estado || 'aprobada').toLowerCase() === 'aprobada' && !e.adminUid,
   }));
 
   return (
@@ -1552,6 +1539,15 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
               <div className="bg-green-50 rounded-lg p-3 text-green-700 text-sm font-medium">{e.comision}% comisión</div>
             </div>
             <p className="text-xs text-slate-400 mt-3 truncate">{e.contacto}</p>
+            {e.sinCuentaVinculada && (
+              <p className="text-xs text-slate-500 mt-2">
+                Aún no tiene cuenta de admin. Puede{' '}
+                <a href="/activar-empresa" target="_blank" rel="noopener noreferrer" className="text-slate-700 font-medium underline hover:text-slate-900">
+                  activar la cuenta
+                </a>{' '}
+                con el correo de la empresa.
+              </p>
+            )}
           </div>
         ))}
       </div>

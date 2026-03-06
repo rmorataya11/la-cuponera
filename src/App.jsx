@@ -6,23 +6,21 @@ import OfertasPage from './pages/OfertasPage';
 import OfertaDetailPage from './pages/OfertaDetailPage';
 import ComprarPage from './pages/ComprarPage';
 import RegistroPage from './pages/RegistroPage';
+import ActivarEmpresaPage from './pages/ActivarEmpresaPage';
 import LoginPage from './pages/LoginPage';
+import RestablecerContrasenaPage from './pages/RestablecerContrasenaPage';
 import MisCuponesPage from './pages/MisCuponesPage';
 import CuponiaAdminDashboard from './pages/AdminDashboard';
+import PanelEmpresaPage from './pages/PanelEmpresaPage';
+import CanjearPage from './pages/CanjearPage';
 import AdminRoute from './components/AdminRoute';
+import EmpresaRoute from './components/EmpresaRoute';
+import EmpleadoRoute from './components/EmpleadoRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <CuponiaAdminDashboard />
-            </AdminRoute>
-          }
-        />
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="ofertas" element={<OfertasPage />} />
@@ -36,13 +34,39 @@ function App() {
             }
           />
           <Route path="registro" element={<RegistroPage />} />
+          <Route path="activar-empresa" element={<ActivarEmpresaPage />} />
           <Route path="iniciar-sesion" element={<LoginPage />} />
+          <Route path="restablecer-contrasena" element={<RestablecerContrasenaPage />} />
           <Route
             path="mis-cupones"
             element={
               <ProtectedRoute>
                 <MisCuponesPage />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin"
+            element={
+              <AdminRoute>
+                <CuponiaAdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="panel-empresa"
+            element={
+              <EmpresaRoute>
+                <PanelEmpresaPage />
+              </EmpresaRoute>
+            }
+          />
+          <Route
+            path="canjear"
+            element={
+              <EmpleadoRoute>
+                <CanjearPage />
+              </EmpleadoRoute>
             }
           />
         </Route>
