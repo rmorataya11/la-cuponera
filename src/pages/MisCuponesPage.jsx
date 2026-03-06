@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getCuponesByClienteId, clasificarCupones } from '../services/cuponesService';
-import { getOfertaById } from '../services/ofertasService';
+import { getOfertaById, getEmpresaById } from '../services/ofertasService';
 import { descargarPdfCupon } from '../utils/generarPdfCupon';
 
 const TABS = [
@@ -33,7 +33,10 @@ export default function MisCuponesPage() {
         await Promise.all(
           ids.map(async (id) => {
             const o = await getOfertaById(id);
-            if (o) map[id] = o;
+            if (o) {
+              const emp = o.empresaId ? await getEmpresaById(o.empresaId) : null;
+              map[id] = { ...o, empresaNombre: emp?.nombre ?? '' };
+            }
           })
         );
         if (!cancelled) setOfertasMap(map);
@@ -122,7 +125,13 @@ export default function MisCuponesPage() {
               {tab === 'disponibles' && (
                 <button
                   type="button"
-                  onClick={() => descargarPdfCupon(c, ofertasMap[c.ofertaId])}
+                  onClick={async () => {
+                    try {
+                      await descargarPdfCupon(c, ofertasMap[c.ofertaId]);
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
                   className="shrink-0 px-4 py-2 text-sm font-medium text-blue-800 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors duration-150"
                 >
                   Descargar PDF
