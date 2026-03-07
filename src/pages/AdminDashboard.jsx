@@ -12,6 +12,7 @@ import {
   updateRubro,
   getEmpresas,
   addEmpresa,
+  deleteEmpresa,
   getClientesTodos,
   getCuponesTodos,
   asignarEmpresaIdACuponesSinEmpresa,
@@ -302,7 +303,7 @@ export default function CuponiaAdminDashboard() {
                 />
               )}
               {activeTab === 'clientes' && (
-                <ClientesSection clientes={clientes} cupones={cupones} />
+                <ClientesSection clientes={clientes} cupones={cupones} ofertas={ofertas} />
               )}
               {activeTab === 'cupones' && (
                 <CuponesSection
@@ -1404,6 +1405,7 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
 function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     nombre: '',
@@ -1447,6 +1449,20 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
     }
   };
 
+  const handleDelete = async (emp) => {
+    if (!window.confirm(`¿Eliminar la empresa "${emp.nombre}"? Se eliminarán también todas sus ofertas. Esta acción no se puede deshacer.`)) return;
+    setError('');
+    setDeletingId(emp.id);
+    try {
+      await deleteEmpresa(emp.id);
+      await onRefetch?.();
+    } catch (err) {
+      setError(err?.message || 'No se pudo eliminar la empresa.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const empresasConDisplay = empresas.map((e) => ({
     ...e,
     rubro: rubros.find((r) => r.id === e.rubroId)?.nombre ?? e.rubroId ?? '—',
@@ -1460,6 +1476,9 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
 
   return (
     <div className="space-y-6">
+      {error && !showForm && (
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm" role="alert">{error}</div>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -1548,6 +1567,16 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
                 con el correo de la empresa.
               </p>
             )}
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => handleDelete(e)}
+                disabled={deletingId === e.id}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 disabled:opacity-50"
+              >
+                {deletingId === e.id ? 'Eliminando...' : 'Eliminar empresa'}
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -1556,17 +1585,26 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
 }
 
 // --- Sección Clientes ---
-function ClientesSection({ clientes = [], cupones = [] }) {
+function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
   const [busqueda, setBusqueda] = useState('');
   const [orden, setOrden] = useState('nombre');
-  const conCupones = clientes.map((c) => ({
-    ...c,
-    email: c.correo ?? c.email,
-    cupones: cupones.filter((cup) => cup.clienteId === c.id).length,
-    gasto: 0,
-    registro: '',
-    activo: true,
-  }));
+  const ofertaById = Object.fromEntries(ofertas.map((o) => [o.id, o]));
+  const conCupones = clientes.map((c) => {
+    const cuponesCliente = cupones.filter((cup) => cup.clienteId === c.id);
+    const gasto = cuponesCliente.reduce((sum, cup) => {
+      const oferta = ofertaById[cup.ofertaId];
+      const precio = oferta != null ? (Number(oferta.precio) || Number(oferta.precioOferta) || 0) : 0;
+      return sum + precio;
+    }, 0);
+    return {
+      ...c,
+      email: c.correo ?? c.email,
+      cupones: cuponesCliente.length,
+      gasto,
+      registro: '',
+      activo: true,
+    };
+  });
   const filtrados = conCupones.filter(
     (c) => !busqueda || (c.nombre && c.nombre.toLowerCase().includes(busqueda.toLowerCase())) || (c.email && c.email.toLowerCase().includes(busqueda.toLowerCase())) || (c.correo && c.correo.toLowerCase().includes(busqueda.toLowerCase()))
   );

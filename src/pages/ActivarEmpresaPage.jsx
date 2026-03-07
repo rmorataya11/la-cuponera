@@ -1,24 +1,70 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
 
 const ERROR_MESSAGES = {
-  'auth/email-already-in-use': 'Este correo ya tiene una cuenta. Iniciá sesión.',
+  'auth/email-already-in-use': 'Este correo ya tiene una cuenta. Iniciá sesión con ese correo y después entrá de nuevo a esta página: vas a ver el botón "Vincular mi cuenta a la empresa" para usarlo como admin.',
   'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
   'auth/invalid-email': 'El correo no es válido.',
 };
 
 export default function ActivarEmpresaPage() {
   const navigate = useNavigate();
+  const { user: userFromContext } = useAuth();
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({ correo: '', password: '', confirmPassword: '' });
 
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setCurrentUser(u));
+    return () => unsub();
+  }, []);
+
+  const user = currentUser ?? userFromContext;
+
+  useEffect(() => {
+    if (user?.email) setForm((prev) => ({ ...prev, correo: user.email }));
+  }, [user?.email]);
+
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError('');
+  }
+
+  async function vincularCuentaActual() {
+    const email = (user?.email || form.correo || '').trim();
+    if (!email) {
+      setError('No se detectó tu correo.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const snap = await getDocs(
+        query(collection(db, 'empresas'), where('correo', '==', email))
+      );
+      const empresaPendiente = snap.docs.find((d) => {
+        const data = d.data();
+        const aprobada = data.estado === 'aprobada' || data.estado == null || data.estado === '';
+        const sinAdmin = !data.adminUid || data.adminUid === '';
+        return aprobada && sinAdmin;
+      });
+      if (!empresaPendiente) {
+        setError('No hay una empresa aprobada con ese correo pendiente de activar, o ya tiene una cuenta vinculada.');
+        setLoading(false);
+        return;
+      }
+      await updateDoc(doc(db, 'empresas', empresaPendiente.id), { adminUid: user.uid });
+      navigate('/panel-empresa', { replace: true });
+    } catch (err) {
+      setError(err?.message || 'No se pudo vincular.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -29,6 +75,12 @@ export default function ActivarEmpresaPage() {
       setError('Ingresá el correo de la empresa.');
       return;
     }
+
+    if (user && user.email === email) {
+      await vincularCuentaActual();
+      return;
+    }
+
     if (!password || password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres.');
       return;
@@ -44,13 +96,13 @@ export default function ActivarEmpresaPage() {
       const uid = userCredential.user.uid;
 
       const snap = await getDocs(
-        query(
-          collection(db, 'empresas'),
-          where('correo', '==', email),
-          where('estado', '==', 'aprobada')
-        )
+        query(collection(db, 'empresas'), where('correo', '==', email))
       );
-      const empresaPendiente = snap.docs.find((d) => !d.data().adminUid);
+      const empresaPendiente = snap.docs.find((d) => {
+        const data = d.data();
+        const aprobada = data.estado === 'aprobada' || data.estado == null || data.estado === '';
+        return aprobada && !data.adminUid;
+      });
       if (!empresaPendiente) {
         setError('No hay una empresa aprobada con ese correo pendiente de activar, o ya tiene una cuenta vinculada.');
         setLoading(false);
@@ -70,10 +122,25 @@ export default function ActivarEmpresaPage() {
     <div className="max-w-md mx-auto">
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
         <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-2">Activar cuenta de empresa</h1>
-        <p className="text-slate-500 text-sm mb-6">
+        <p className="text-slate-500 text-sm mb-4">
           Usá el correo con el que fue aprobada tu empresa. Si ya tenés cuenta, <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">iniciá sesión</Link>.
           {' '}<Link to="/restablecer-contrasena" className="font-medium text-blue-800 hover:text-blue-900">¿Olvidaste tu contraseña?</Link>
         </p>
+
+        {user && (
+          <div className="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200">
+            <p className="text-sm text-blue-900 font-medium mb-2">Estás logueado como {user.email}</p>
+            <p className="text-sm text-blue-800 mb-3">Si este es el correo de tu empresa aprobada, vinculá tu cuenta y entrá al panel de empresa sin crear otra cuenta.</p>
+            <button
+              type="button"
+              onClick={vincularCuentaActual}
+              disabled={loading}
+              className="w-full py-2.5 px-4 rounded-lg bg-blue-700 text-white font-medium text-sm hover:bg-blue-800 disabled:opacity-50"
+            >
+              {loading ? 'Vinculando...' : 'Vincular mi cuenta a la empresa'}
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (

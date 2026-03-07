@@ -46,7 +46,7 @@ service cloud.firestore {
             && request.resource.data.keys().hasOnly(['nombre', 'codigo', 'direccion', 'nombreContacto', 'telefono', 'correo', 'rubroId', 'porcentajeComision', 'estado']));
       allow update: if isAdmin()
         || (request.auth != null
-            && resource.data.get('estado', '') == 'aprobada'
+            && (resource.data.get('estado', '') == 'aprobada' || resource.data.get('estado', '') == '')
             && (resource.data.get('adminUid', null) == null || resource.data.get('adminUid', '') == '')
             && resource.data.get('correo', '') == request.auth.token.email
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['adminUid'])

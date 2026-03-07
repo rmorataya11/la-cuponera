@@ -92,11 +92,13 @@ export default function RestablecerContrasenaPage() {
           </form>
         )}
 
-        <p className="mt-6 text-center text-sm text-slate-500">
-          <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">
-            Volver a iniciar sesión
-          </Link>
-        </p>
+        {!success && (
+          <p className="mt-6 text-center text-sm text-slate-500">
+            <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">
+              Volver a iniciar sesión
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

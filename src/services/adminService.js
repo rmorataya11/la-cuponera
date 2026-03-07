@@ -10,6 +10,7 @@ import {
   updateDoc,
   addDoc,
   deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase';
@@ -161,8 +162,21 @@ export async function addEmpresa(data) {
     correo: (data.correo || '').trim(),
     rubroId: data.rubroId || '',
     porcentajeComision: Number(data.porcentajeComision) || 0,
+    estado: 'aprobada',
   });
   return ref.id;
+}
+
+/** Elimina una empresa y todas sus ofertas. Solo admin. */
+export async function deleteEmpresa(empresaId) {
+  if (!empresaId) return;
+  const ofertasSnap = await getDocs(
+    query(collection(db, 'ofertas'), where('empresaId', '==', empresaId))
+  );
+  const batch = writeBatch(db);
+  ofertasSnap.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(doc(db, 'empresas', empresaId));
+  await batch.commit();
 }
 
 // --- Empleados (admin o admin de empresa para su empresa) ---

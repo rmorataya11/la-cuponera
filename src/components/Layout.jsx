@@ -123,6 +123,14 @@ export default function Layout() {
                         Canjear cupón
                       </Link>
                     )}
+                    {(rol === 'cliente' || !rol) && (
+                      <Link
+                        to="/activar-empresa"
+                        className="px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                      >
+                        Activar empresa
+                      </Link>
+                    )}
                     {userDisplay && (
                       <span className="px-3 py-2 text-sm text-slate-600 truncate max-w-[180px]" title={user.email}>
                         {userDisplay}
