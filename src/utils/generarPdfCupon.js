@@ -67,8 +67,11 @@ function wrapText(doc, text, x, y, maxWidth, lineHeight = 5) {
  * Genera y descarga un PDF con los datos del cupón.
  * @param {Object} cupon - { codigo, fechaCompra, fechaLimiteUso }
  * @param {Object} oferta - { titulo, precioOferta, descripcion, fotoURL, empresaNombre } (opcional)
+ * @param {Object} [opciones]
+ * @param {string} [opciones.nombreUsuario] - Nombre de la cuenta del comprador (ej. desde perfil en Firestore)
  */
-export async function descargarPdfCupon(cupon, oferta = {}) {
+export async function descargarPdfCupon(cupon, oferta = {}, opciones = {}) {
+  const nombreUsuario = (opciones.nombreUsuario && String(opciones.nombreUsuario).trim()) || '';
   const doc = new jsPDF({ format: 'a5' });
   const pageW = doc.internal.pageSize.getWidth();
   const margin = 18;
@@ -145,10 +148,15 @@ export async function descargarPdfCupon(cupon, oferta = {}) {
   doc.line(margin, y, pageW - margin, y);
   y += 8;
 
-  // --- Fechas legibles ---
+  // --- Fechas legibles y titular de la cuenta ---
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
   doc.text(`Comprado: ${fechaCompraStr}`, margin, y);
   y += 6;
+  if (nombreUsuario) {
+    y = wrapText(doc, `Usuario: ${nombreUsuario}`, margin, y, maxW, 5);
+    y += 3;
+  }
   doc.setFont('helvetica', 'bold');
   doc.text(`Válido hasta: ${fechaLimiteStr}`, margin, y);
   doc.setFont('helvetica', 'normal');

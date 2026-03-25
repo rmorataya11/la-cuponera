@@ -5,13 +5,7 @@ export default function HomePage() {
   const { user } = useAuth();
 
   return (
-    <div className="relative text-center max-w-xl mx-auto pt-4 sm:pt-8 overflow-hidden">
-      {/* Círculos de fondo con animación float (suben/bajan y crecen un poco) */}
-      <div className="absolute inset-0 pointer-events-none -z-10">
-        <div className="absolute top-20 left-1/4 w-56 h-56 rounded-full bg-primary-200/50 animate-float" style={{ animationDelay: '0s' }} />
-        <div className="absolute bottom-32 right-1/4 w-44 h-44 rounded-full bg-primary-100/70 animate-float" style={{ animationDelay: '2s' }} />
-      </div>
-
+    <div className="text-center max-w-xl mx-auto pt-4 sm:pt-8">
       <h1
         className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight mb-3 animate-fade-in-up"
         style={{ animationDelay: '0.15s' }}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getCuponesByClienteId, clasificarCupones } from '../services/cuponesService';
 import { getOfertaById, getEmpresaById } from '../services/ofertasService';
+import { getClienteByUid } from '../services/adminService';
 import { descargarPdfCupon } from '../utils/generarPdfCupon';
 
 const TABS = [
@@ -14,6 +15,7 @@ export default function MisCuponesPage() {
   const { user } = useAuth();
   const [cupones, setCupones] = useState([]);
   const [ofertasMap, setOfertasMap] = useState({});
+  const [nombreUsuarioPdf, setNombreUsuarioPdf] = useState('');
   const [tab, setTab] = useState('disponibles');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -21,13 +23,25 @@ export default function MisCuponesPage() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      if (!user?.uid) return;
+      if (!user?.uid) {
+        setNombreUsuarioPdf('');
+        return;
+      }
       setLoading(true);
       setError('');
       try {
-        const list = await getCuponesByClienteId(user.uid);
+        const [list, cliente] = await Promise.all([
+          getCuponesByClienteId(user.uid),
+          getClienteByUid(user.uid).catch(() => null),
+        ]);
         if (cancelled) return;
         setCupones(list);
+        const nombre =
+          cliente?.nombre?.trim() ||
+          user.displayName?.trim() ||
+          user.email ||
+          '';
+        setNombreUsuarioPdf(nombre);
         const ids = [...new Set(list.map((c) => c.ofertaId).filter(Boolean))];
         const map = {};
         await Promise.all(
@@ -127,7 +141,9 @@ export default function MisCuponesPage() {
                   type="button"
                   onClick={async () => {
                     try {
-                      await descargarPdfCupon(c, ofertasMap[c.ofertaId]);
+                      await descargarPdfCupon(c, ofertasMap[c.ofertaId], {
+                        nombreUsuario: nombreUsuarioPdf,
+                      });
                     } catch (err) {
                       console.error(err);
                     }
