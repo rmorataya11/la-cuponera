@@ -30,6 +30,7 @@ export default function Layout() {
   const [empresaNombre, setEmpresaNombre] = useState(null);
 
   const isFullWidthRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/panel-empresa') || location.pathname.startsWith('/canjear');
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     if (!user) {
@@ -77,8 +78,33 @@ export default function Layout() {
   const userDisplay = user && !loading && user.email;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/80">
-      <header className="bg-white/90 backdrop-blur-sm border-b border-slate-200/60 sticky top-0 z-10">
+    <div className={`min-h-screen flex flex-col relative ${isHome ? '' : 'bg-slate-50/80'}`}>
+      {isHome && (
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-white to-blue-50/90" />
+          <div
+            className="absolute -top-32 -right-24 h-[min(55vw,28rem)] w-[min(55vw,28rem)] rounded-full bg-blue-800/[0.06] blur-2xl"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 h-[min(28vh,200px)] text-blue-900/[0.07]"
+            aria-hidden
+          >
+            <svg
+              className="h-full w-full"
+              viewBox="0 0 1440 120"
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="currentColor"
+                d="M0,48L60,52C120,56,240,64,360,58.7C480,53,600,43,720,42.7C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
+              />
+            </svg>
+          </div>
+        </div>
+      )}
+      <header className={`border-b border-slate-200/60 sticky top-0 z-20 ${isHome ? 'bg-white/80 backdrop-blur-md' : 'bg-white/90 backdrop-blur-sm'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
           <Link
             to="/"
@@ -160,7 +186,7 @@ export default function Layout() {
           </nav>
         </div>
       </header>
-      <main className={`flex-1 w-full ${isFullWidthRoute ? 'p-0 min-h-0' : 'max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12'}`}>
+      <main className={`relative z-10 flex-1 w-full ${isFullWidthRoute ? 'p-0 min-h-0' : 'max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12'}`}>
         {!isFullWidthRoute && rol === 'cliente' && clienteNombre && (
           <p className="text-slate-600 text-lg mb-4 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>Bienvenido, {clienteNombre}.</p>
         )}
