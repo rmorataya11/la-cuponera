@@ -114,7 +114,8 @@ export default function MisCuponesPage() {
         <ul className="space-y-3">
           {list.map((c) => {
             const oferta = ofertasMap[c.ofertaId];
-            const fotoURL = oferta?.fotoURL;
+            const fotoURL =
+              (c.fotoURL || c.foto_url || oferta?.fotoURL || oferta?.foto_url || '').trim() || null;
             return (
             <li
               key={c.id}
@@ -141,7 +142,7 @@ export default function MisCuponesPage() {
                   type="button"
                   onClick={async () => {
                     try {
-                      await descargarPdfCupon(c, ofertasMap[c.ofertaId], {
+                      await descargarPdfCupon(c, ofertasMap[c.ofertaId] || {}, {
                         nombreUsuario: nombreUsuarioPdf,
                       });
                     } catch (err) {

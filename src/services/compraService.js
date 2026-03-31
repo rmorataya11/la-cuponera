@@ -23,12 +23,22 @@ function normalizarEmpresaId(id) {
  * @param {string} fechaLimiteUso - fecha límite para canjear (de la oferta)
  * @param {string} empresaCodigo - código de la empresa (3 letras + 3 dígitos)
  * @param {string} [empresaId] - ID del documento empresa (para que el empleado pueda canjear)
+ * @param {string|null} [fotoOfertaURL] - URL de la foto al momento de la compra (PDF / listado sin depender solo de la oferta)
  */
-export async function procesarCompra(ofertaId, clienteId, cantidad, fechaLimiteUso, empresaCodigo, empresaId = null) {
+export async function procesarCompra(
+  ofertaId,
+  clienteId,
+  cantidad,
+  fechaLimiteUso,
+  empresaCodigo,
+  empresaId = null,
+  fotoOfertaURL = null
+) {
   const batch = writeBatch(db);
   const cuponesRef = collection(db, 'cupones');
   const fechaCompra = new Date().toISOString().slice(0, 10);
   const empresaIdNorm = normalizarEmpresaId(empresaId);
+  const fotoTrim = (fotoOfertaURL && String(fotoOfertaURL).trim()) || '';
 
   for (let i = 0; i < cantidad; i++) {
     const codigo = generarCodigoCupon(empresaCodigo);
@@ -41,6 +51,7 @@ export async function procesarCompra(ofertaId, clienteId, cantidad, fechaLimiteU
       estado: 'disponible',
       fechaCompra,
       fechaLimiteUso: fechaLimiteUso || fechaCompra,
+      ...(fotoTrim ? { fotoURL: fotoTrim } : {}),
     });
   }
 

@@ -112,7 +112,8 @@ export default function ComprarPage() {
         form.cantidad,
         oferta.fechaLimiteUso,
         empresaCodigo,
-        oferta.empresaId || empresa?.id || null
+        oferta.empresaId || empresa?.id || null,
+        (oferta.fotoURL || oferta.foto_url || '').trim() || null
       );
       navigate('/mis-cupones', { replace: true });
     } catch (err) {
