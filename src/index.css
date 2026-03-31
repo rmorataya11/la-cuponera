@@ -34,7 +34,7 @@ input[type="number"],
 select {
   @apply w-full px-4 py-2.5 text-slate-900 border border-slate-200 rounded-lg bg-white
     placeholder:text-slate-400
-    focus:outline-none focus:ring-2 focus:ring-blue-800/25 focus:border-blue-800
+    focus:outline-none focus:ring-2 focus:ring-[#2097A9]/25 focus:border-[#2097A9]
     transition-colors duration-150;
 }
 
@@ -49,21 +49,22 @@ select {
 
 /* Enlaces discretos */
 a {
-  @apply outline-none focus-visible:ring-2 focus-visible:ring-blue-800/30 focus-visible:ring-offset-2 rounded;
+  @apply outline-none focus-visible:ring-2 focus-visible:ring-[#2097A9]/30 focus-visible:ring-offset-2 rounded;
 }
 
 /* Botones primarios reutilizables */
 .btn-primary {
-  @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-blue-800
+  @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-[#2097A9]
     rounded-lg transition-all duration-200
-    hover:bg-blue-900 hover:scale-[1.02] active:scale-[0.98]
+    hover:bg-[#1a7a89] hover:scale-[1.02] active:scale-[0.98]
     disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
 }
 
+/* En @apply, evitar hover:+primary-* (Tailwind/PostCSS no siempre las genera en CSS compuesto) */
 .btn-secondary {
-  @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-slate-700
-    bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300
-    rounded-lg transition-all duration-200
+  @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-[#2097A9]
+    bg-white rounded-lg border border-[#a3dde4] transition-all duration-200
+    hover:bg-[#e8f6f8] hover:border-[#75ccd3]
     hover:scale-[1.02] active:scale-[0.98]
     disabled:hover:scale-100;
 }

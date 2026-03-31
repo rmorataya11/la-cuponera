@@ -132,12 +132,12 @@ export default function RegistroPage() {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           ¿Ya tienes cuenta?{' '}
-          <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900">
+          <Link to="/iniciar-sesion" className="font-medium text-primary-700 hover:text-primary-800">
             Iniciar sesión
           </Link>
         </p>
         <p className="mt-2 text-center text-sm text-slate-500">
-          <Link to="/restablecer-contrasena" className="font-medium text-blue-800 hover:text-blue-900">
+          <Link to="/restablecer-contrasena" className="font-medium text-primary-700 hover:text-primary-800">
             ¿Olvidaste tu contraseña?
           </Link>
         </p>

@@ -22,7 +22,7 @@ import {
 } from '../services/adminService';
 import { setEmpleadoByUid } from '../services/canjeService';
 
-const PRIMARY = '#2d3fc2';
+const PRIMARY = '#2097A9';
 const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
 
 function diasHasta(fechaStr) {
@@ -538,7 +538,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Rubro *</label>
-                <select name="rubroId" value={form.rubroId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+                <select name="rubroId" value={form.rubroId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900">
                   <option value="">Elegir rubro</option>
                   {rubros.filter((r) => r.activo !== false).map((r) => (
                     <option key={r.id} value={r.id}>{r.nombre}</option>
@@ -559,7 +559,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
                     onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                     onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragging ? 'border-[#2d3fc2] bg-[#2d3fc2]/5' : 'border-slate-200 hover:bg-slate-50'} ${uploadingImage ? 'opacity-70 pointer-events-none' : ''}`}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer ${isDragging ? 'border-[#2097A9] bg-[#2097A9]/5' : 'border-slate-200 hover:bg-slate-50'} ${uploadingImage ? 'opacity-70 pointer-events-none' : ''}`}
                   >
                     {uploadingImage ? 'Subiendo...' : 'Arrastrá una imagen o hacé clic'}
                   </div>
@@ -572,39 +572,39 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Título *</label>
-                <input type="text" name="titulo" value={form.titulo} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. 2x1 en desayunos" />
+                <input type="text" name="titulo" value={form.titulo} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Ej. 2x1 en desayunos" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio regular</label>
-                <input type="number" name="precioRegular" value={form.precioRegular} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+                <input type="number" name="precioRegular" value={form.precioRegular} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="0" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio oferta</label>
-                <input type="number" name="precioOferta" value={form.precioOferta} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+                <input type="number" name="precioOferta" value={form.precioOferta} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="0" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha inicio</label>
-                <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha fin</label>
-                <input type="date" name="fechaFin" value={form.fechaFin} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                <input type="date" name="fechaFin" value={form.fechaFin} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha límite uso cupón</label>
-                <input type="date" name="fechaLimiteUso" value={form.fechaLimiteUso} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                <input type="date" name="fechaLimiteUso" value={form.fechaLimiteUso} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
               </div>
               <div>
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Límite cupones (vacío = sin límite)</label>
-                <input type="number" name="cantidadLimite" value={form.cantidadLimite} onChange={handleFormChange} min={0} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Opcional" />
+                <input type="number" name="cantidadLimite" value={form.cantidadLimite} onChange={handleFormChange} min={0} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Opcional" />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Descripción</label>
-                <textarea name="descripcion" value={form.descripcion} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                <textarea name="descripcion" value={form.descripcion} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Otros detalles</label>
-                <textarea name="otrosDetalles" value={form.otrosDetalles} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                <textarea name="otrosDetalles" value={form.otrosDetalles} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
               </div>
             </div>
             <div className="flex gap-2">
@@ -711,15 +711,15 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
                 <h3 className="font-bold text-slate-900">{editingEmpleado ? 'Editar empleado' : 'Nuevo empleado'}</h3>
                 <div>
                   <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Nombres *</label>
-                  <input type="text" name="nombres" value={formEmpleado.nombres} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. María" />
+                  <input type="text" name="nombres" value={formEmpleado.nombres} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Ej. María" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Apellidos *</label>
-                  <input type="text" name="apellidos" value={formEmpleado.apellidos} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. García" />
+                  <input type="text" name="apellidos" value={formEmpleado.apellidos} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Ej. García" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Correo *</label>
-                  <input type="email" name="correo" value={formEmpleado.correo} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="empleado@ejemplo.com" />
+                  <input type="email" name="correo" value={formEmpleado.correo} onChange={handleFormEmpleadoChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="empleado@ejemplo.com" />
                 </div>
                 {!editingEmpleado && (
                   <>
@@ -732,12 +732,12 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
                         <div>
                           <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Contraseña del empleado * (mín. 6 caracteres)</label>
                           <p className="text-xs text-slate-500 mb-1">Elegí cualquier contraseña; el empleado la usará para iniciar sesión. Podés compartirla después.</p>
-                          <input type="password" name="contraseña" value={formEmpleado.contraseña || ''} onChange={handleFormEmpleadoChange} minLength={6} placeholder="Ej. empleado123" className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                          <input type="password" name="contraseña" value={formEmpleado.contraseña || ''} onChange={handleFormEmpleadoChange} minLength={6} placeholder="Ej. empleado123" className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
                         </div>
                         <div>
                           <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Tu contraseña actual (admin) *</label>
                           <p className="text-xs text-slate-500 mb-1">La contraseña con la que entraste a este panel. Se usa para volver a tu sesión después de crear la cuenta del empleado.</p>
-                          <input type="password" name="tuContraseña" value={formEmpleado.tuContraseña || ''} onChange={handleFormEmpleadoChange} placeholder="Tu contraseña de cafelaesquina@correo.com" className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+                          <input type="password" name="tuContraseña" value={formEmpleado.tuContraseña || ''} onChange={handleFormEmpleadoChange} placeholder="Tu contraseña de cafelaesquina@correo.com" className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
                         </div>
                       </>
                     )}

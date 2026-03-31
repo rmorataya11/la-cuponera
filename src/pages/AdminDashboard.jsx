@@ -19,10 +19,10 @@ import {
 } from '../services/adminService';
 
 // --- Paleta (valores que Tailwind no cubre) ---
-const PRIMARY = '#2d3fc2';
-const PRIMARY_HOVER = '#1e2fa0';
-const PRIMARY_LIGHT_BG = '#dbeafe';
-const PRIMARY_LIGHT_TEXT = '#1d4ed8';
+const PRIMARY = '#2097A9';
+const PRIMARY_HOVER = '#1a7a89';
+const PRIMARY_LIGHT_BG = '#e8f6f8';
+const PRIMARY_LIGHT_TEXT = '#2097A9';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: '▣' },
@@ -388,7 +388,7 @@ function Badge({ estado }) {
     aprobada: 'bg-green-100 text-green-700',
     pendiente: 'bg-amber-100 text-amber-700',
     rechazada: 'bg-red-100 text-red-700',
-    disponible: 'bg-blue-100 text-blue-700',
+    disponible: 'bg-primary-100 text-primary-700',
     canjeado: 'bg-violet-100 text-violet-700',
     vencido: 'bg-slate-100 text-slate-500',
   };
@@ -523,12 +523,12 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
   return (
     <div className="space-y-6">
       {ofertasPendientes > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
-          <p className="text-blue-800 font-medium">Hay {ofertasPendientes} oferta(s) pendiente(s) de aprobación.</p>
+        <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center justify-between">
+          <p className="text-primary-700 font-medium">Hay {ofertasPendientes} oferta(s) pendiente(s) de aprobación.</p>
           <button
             type="button"
             onClick={() => onNavigate('ofertas')}
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-primary-600 font-semibold hover:underline"
           >
             Ir a Ofertas →
           </button>
@@ -536,7 +536,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="rounded-2xl p-5 shadow-sm border border-blue-200 bg-blue-100">
+        <div className="rounded-2xl p-5 shadow-sm border border-primary-200 bg-primary-100">
           <p className="text-2xl font-bold text-slate-900">{cupones.length.toLocaleString()}</p>
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Cupones vendidos</p>
           <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
@@ -555,7 +555,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Tasa de canje</p>
           <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
         </div>
-        <div className="rounded-2xl p-5 shadow-sm border border-sky-200 bg-sky-100">
+        <div className="rounded-2xl p-5 shadow-sm border border-primary-200 bg-primary-100">
           <p className="text-2xl font-bold text-slate-900">{totalClientes.toLocaleString()}</p>
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Usuarios registrados</p>
         </div>
@@ -662,7 +662,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-blue-600"
+                    className="h-full rounded-full bg-primary-600"
                     style={{ width: `${(o.vendidos / maxVendidos) * 100}%` }}
                   />
                 </div>
@@ -895,7 +895,7 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Empresa *</label>
-              <select name="empresaId" value={form.empresaId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+              <select name="empresaId" value={form.empresaId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900">
                 <option value="">Elegir empresa</option>
                 {empresas.map((emp) => (
                   <option key={emp.id} value={emp.id}>{emp.nombre}</option>
@@ -904,7 +904,7 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Rubro *</label>
-              <select name="rubroId" value={form.rubroId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+              <select name="rubroId" value={form.rubroId} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900">
                 <option value="">Elegir rubro</option>
                 {rubros.filter((r) => r.activo !== false).map((r) => (
                   <option key={r.id} value={r.id}>{r.nombre}</option>
@@ -943,7 +943,7 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
                   onClick={() => fileInputRef.current?.click()}
                   className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
                     isDragging
-                      ? 'border-[#2d3fc2] bg-[#2d3fc2]/5'
+                      ? 'border-[#2097A9] bg-[#2097A9]/5'
                       : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   } ${uploadingImage ? 'pointer-events-none opacity-70' : ''}`}
                 >
@@ -973,46 +973,46 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
                   name="fotoURL"
                   value={form.fotoURL}
                   onChange={handleFormChange}
-                  className="mt-2 w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900 text-sm"
+                  className="mt-2 w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900 text-sm"
                   placeholder="https://ejemplo.com/imagen.jpg"
                 />
               )}
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Título *</label>
-              <input type="text" name="titulo" value={form.titulo} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. 2x1 en desayunos" />
+              <input type="text" name="titulo" value={form.titulo} onChange={handleFormChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Ej. 2x1 en desayunos" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio regular</label>
-              <input type="number" name="precioRegular" value={form.precioRegular} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+              <input type="number" name="precioRegular" value={form.precioRegular} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="0" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Precio oferta</label>
-              <input type="number" name="precioOferta" value={form.precioOferta} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+              <input type="number" name="precioOferta" value={form.precioOferta} onChange={handleFormChange} min={0} step={0.01} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="0" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha inicio</label>
-              <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha fin</label>
-              <input type="date" name="fechaFin" value={form.fechaFin} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="date" name="fechaFin" value={form.fechaFin} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Fecha límite uso cupón</label>
-              <input type="date" name="fechaLimiteUso" value={form.fechaLimiteUso} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="date" name="fechaLimiteUso" value={form.fechaLimiteUso} onChange={handleFormChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Límite cupones (vacío = sin límite)</label>
-              <input type="number" name="cantidadLimite" value={form.cantidadLimite} onChange={handleFormChange} min={0} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Opcional" />
+              <input type="number" name="cantidadLimite" value={form.cantidadLimite} onChange={handleFormChange} min={0} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Opcional" />
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Descripción</label>
-              <textarea name="descripcion" value={form.descripcion} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <textarea name="descripcion" value={form.descripcion} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Otros detalles</label>
-              <textarea name="otrosDetalles" value={form.otrosDetalles} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <textarea name="otrosDetalles" value={form.otrosDetalles} onChange={handleFormChange} rows={2} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
           </div>
           <div className="flex gap-2">
@@ -1054,7 +1054,7 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
                     <td className="py-3 px-4">
                       <div className="w-20">
                         <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-primary-500 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-xs text-slate-500">{o.vendidos}{o.limite != null ? ` / ${o.limite}` : ''}</span>
                       </div>
@@ -1186,7 +1186,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
           placeholder="Buscar por código o oferta..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="flex-1 px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none focus:ring-1 focus:ring-[#2d3fc2]/30"
+          className="flex-1 px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none focus:ring-1 focus:ring-[#2097A9]/30"
         />
         <div className="flex flex-wrap gap-2">
           {ESTADOS.map((f) => (
@@ -1205,7 +1205,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <p className="text-slate-500 text-sm">Disponibles</p>
-          <p className="text-2xl font-bold text-blue-600">{disp}</p>
+          <p className="text-2xl font-bold text-primary-600">{disp}</p>
         </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <p className="text-slate-500 text-sm">Canjeados</p>
@@ -1225,7 +1225,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
               className={`rounded-2xl border p-4 shadow-sm ${esUrgente ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="font-mono font-semibold text-blue-700 text-sm">{c.codigo}</span>
+                <span className="font-mono font-semibold text-primary-700 text-sm">{c.codigo}</span>
                 {esUrgente && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Urgente</span>}
               </div>
               <p className="font-medium text-slate-900 mt-1">{c.nombre}</p>
@@ -1340,7 +1340,7 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
           value={nuevoNombre}
           onChange={(e) => { setNuevoNombre(e.target.value); setError(''); }}
           onKeyDown={(e) => e.key === 'Enter' && agregar()}
-          className="flex-1 min-w-[200px] max-w-xs px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none focus:ring-1 focus:ring-[#2d3fc2]/30"
+          className="flex-1 min-w-[200px] max-w-xs px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none focus:ring-1 focus:ring-[#2097A9]/30"
           disabled={saving}
         />
         <button
@@ -1370,7 +1370,7 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
                 onChange={(e) => setEditValor(e.target.value)}
                 onBlur={() => guardarEdicion(r.id)}
                 onKeyDown={(e) => e.key === 'Enter' && guardarEdicion(r.id)}
-                className="w-full px-3 py-2 border rounded-lg border-[#2d3fc2] bg-white"
+                className="w-full px-3 py-2 border rounded-lg border-[#2097A9] bg-white"
                 autoFocus
               />
             ) : (
@@ -1497,31 +1497,31 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Nombre *</label>
-              <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Ej. Café Central" />
+              <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Ej. Café Central" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Código (3 letras + 3 números)</label>
-              <input type="text" name="codigo" value={form.codigo} onChange={handleChange} maxLength={6} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900 font-mono" placeholder="Ej. CAF001" />
+              <input type="text" name="codigo" value={form.codigo} onChange={handleChange} maxLength={6} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900 font-mono" placeholder="Ej. CAF001" />
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Dirección</label>
-              <input type="text" name="direccion" value={form.direccion} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="Dirección" />
+              <input type="text" name="direccion" value={form.direccion} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="Dirección" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Nombre contacto</label>
-              <input type="text" name="nombreContacto" value={form.nombreContacto} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="text" name="nombreContacto" value={form.nombreContacto} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Teléfono</label>
-              <input type="text" name="telefono" value={form.telefono} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="text" name="telefono" value={form.telefono} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Correo</label>
-              <input type="email" name="correo" value={form.correo} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" />
+              <input type="email" name="correo" value={form.correo} onChange={handleChange} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" />
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">Rubro *</label>
-              <select name="rubroId" value={form.rubroId} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900">
+              <select name="rubroId" value={form.rubroId} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900">
                 <option value="">Elegir rubro</option>
                 {rubros.filter((r) => r.activo !== false).map((r) => (
                   <option key={r.id} value={r.id}>{r.nombre}</option>
@@ -1530,7 +1530,7 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
             </div>
             <div>
               <label className="block text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">% Comisión</label>
-              <input type="number" name="porcentajeComision" value={form.porcentajeComision} onChange={handleChange} min={0} max={100} step={0.5} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2d3fc2] focus:outline-none text-slate-900" placeholder="0" />
+              <input type="number" name="porcentajeComision" value={form.porcentajeComision} onChange={handleChange} min={0} max={100} step={0.5} className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900" placeholder="0" />
             </div>
           </div>
           <div className="flex gap-2">
@@ -1554,7 +1554,7 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
             <p className="text-sm text-slate-500 mb-2">{e.rubro}</p>
             <span className="inline-block px-2 py-1 rounded bg-slate-100 font-mono text-slate-600 text-xs">{e.codigo}</span>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <div className="bg-blue-50 rounded-lg p-3 text-blue-700 text-sm font-medium">{e.cupones} cupones</div>
+              <div className="bg-primary-50 rounded-lg p-3 text-primary-700 text-sm font-medium">{e.cupones} cupones</div>
               <div className="bg-green-50 rounded-lg p-3 text-green-700 text-sm font-medium">{e.comision}% comisión</div>
             </div>
             <p className="text-xs text-slate-400 mt-3 truncate">{e.contacto}</p>

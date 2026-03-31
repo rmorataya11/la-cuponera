@@ -8,7 +8,7 @@ export default function HomePage() {
     <div className="relative text-center max-w-xl mx-auto pt-4 sm:pt-8">
       <div className="rounded-2xl border border-slate-200/90 bg-white px-6 py-10 shadow-lg shadow-slate-200/50 sm:py-12">
         <h1
-          className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight mb-3 animate-fade-in-up"
+          className="text-3xl sm:text-4xl font-semibold text-[#0f4d57] tracking-tight mb-3 animate-fade-in-up"
           style={{ animationDelay: '0.15s' }}
         >
           Las mejores ofertas en un solo lugar
@@ -46,7 +46,7 @@ export default function HomePage() {
             style={{ animationDelay: '0.6s' }}
           >
             ¿Ya tienes cuenta?{' '}
-            <Link to="/iniciar-sesion" className="font-medium text-blue-800 hover:text-blue-900 transition-colors">
+            <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-primary-700 transition-colors">
               Inicia sesión
             </Link>
           </p>

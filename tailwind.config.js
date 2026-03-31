@@ -10,15 +10,18 @@ export default {
         sans: ['DM Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
+        /** Marca Cuponía — #2097A9 */
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+          50: '#e8f6f8',
+          100: '#d1eef2',
+          200: '#a3dde4',
+          300: '#75ccd3',
+          400: '#47bbc2',
+          500: '#2aa4b3',
+          600: '#2097A9',
+          700: '#1a7a89',
+          800: '#166b78',
+          900: '#0f4d57',
         },
       },
       boxShadow: {

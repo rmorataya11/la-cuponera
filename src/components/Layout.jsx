@@ -13,8 +13,8 @@ function NavLink({ to, children }) {
       to={to}
       className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 ${
         isActive
-          ? 'text-blue-800 bg-blue-100'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          ? 'text-[#2097A9] bg-primary-100'
+          : 'text-slate-600 hover:text-[#2097A9] hover:bg-slate-100'
       }`}
     >
       {children}
@@ -88,10 +88,17 @@ export default function Layout() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
           <Link
             to="/"
-            className="text-lg font-semibold tracking-tight text-slate-900 hover:text-blue-800 transition-colors duration-150 truncate max-w-[200px] sm:max-w-none"
+            className="inline-flex items-center gap-2 sm:gap-2.5 min-w-0 max-w-[min(100%,220px)] sm:max-w-none transition-opacity duration-150 hover:opacity-90"
             title={empresaNombre || 'Cuponía'}
           >
-            {rol === 'adminEmpresa' && empresaNombre ? empresaNombre : 'Cuponía'}
+            <img
+              src="/logo_cuponia.png"
+              alt="Cuponia"
+              className="h-8 sm:h-9 w-auto shrink-0 object-contain"
+            />
+            <span className="text-lg font-semibold tracking-tight text-[#2097A9] truncate">
+              {rol === 'adminEmpresa' && empresaNombre ? empresaNombre : 'Cuponía'}
+            </span>
           </Link>
           <nav className="flex items-center gap-0.5">
             <NavLink to="/">Inicio</NavLink>
@@ -155,7 +162,7 @@ export default function Layout() {
                     <NavLink to="/registro">Registro</NavLink>
                     <Link
                       to="/iniciar-sesion"
-                      className="ml-1 px-4 py-2 text-sm font-medium text-white bg-blue-800 hover:bg-blue-900 rounded-lg transition-colors duration-150"
+                      className="ml-1 px-4 py-2 text-sm font-medium text-white bg-[#2097A9] hover:bg-primary-700 rounded-lg transition-colors duration-150"
                     >
                       Iniciar sesión
                     </Link>

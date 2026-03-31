@@ -87,7 +87,7 @@ export default function LoginPage() {
               <label htmlFor="password" className="block text-sm font-medium text-slate-600">
                 Contraseña
               </label>
-              <Link to="/restablecer-contrasena" className="text-sm text-blue-800 hover:text-blue-900 font-medium">
+              <Link to="/restablecer-contrasena" className="text-sm text-primary-700 hover:text-primary-800 font-medium">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -113,13 +113,13 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           ¿No tienes cuenta?{' '}
-          <Link to="/registro" className="font-medium text-blue-800 hover:text-blue-900">
+          <Link to="/registro" className="font-medium text-primary-700 hover:text-primary-800">
             Regístrate
           </Link>
         </p>
         <p className="mt-3 text-center text-sm text-slate-500">
           ¿Sos una empresa? Iniciá sesión aquí con el correo de tu empresa. Si aún no activaste tu cuenta,{' '}
-          <Link to="/activar-empresa" className="font-medium text-blue-800 hover:text-blue-900">
+          <Link to="/activar-empresa" className="font-medium text-primary-700 hover:text-primary-800">
             activala
           </Link>
           .
