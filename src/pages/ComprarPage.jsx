@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getOfertaById, getEmpresaById, filterOfertasVigentes } from '../services/ofertasService';
 import { procesarCompra } from '../services/compraService';
+import { IconArrowLeft } from '../components/icons';
 
 export default function ComprarPage() {
   const { id } = useParams();
@@ -136,8 +137,9 @@ export default function ComprarPage() {
     return (
       <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
-          ← Volver a ofertas
+        <Link to="/ofertas" className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
+          <IconArrowLeft className="w-4 h-4 shrink-0" />
+          Volver a ofertas
         </Link>
       </div>
     );
@@ -147,8 +149,9 @@ export default function ComprarPage() {
     return (
       <div className="rounded-xl bg-white border border-slate-200/80 px-6 py-8 text-slate-600 text-sm">
         Esta oferta ya no está disponible para compra.
-        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
-          ← Volver al detalle
+        <Link to={`/ofertas/${id}`} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
+          <IconArrowLeft className="w-4 h-4 shrink-0" />
+          Volver al detalle
         </Link>
       </div>
     );
@@ -160,9 +163,10 @@ export default function ComprarPage() {
     <div className="max-w-lg">
       <Link
         to={`/ofertas/${id}`}
-        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
       >
-        ← Volver al detalle
+        <IconArrowLeft className="w-4 h-4 shrink-0" />
+        Volver al detalle
       </Link>
 
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">

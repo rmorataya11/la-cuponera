@@ -17,6 +17,22 @@ import {
   getCuponesTodos,
   asignarEmpresaIdACuponesSinEmpresa,
 } from '../services/adminService';
+import {
+  IconNavDashboard,
+  IconNavTag,
+  IconNavBuilding,
+  IconNavTicket,
+  IconNavUsers,
+  IconNavCoupon,
+  IconArrowLeft,
+  IconArrowRight,
+  IconCheck,
+  IconX,
+  IconPencil,
+  IconCircleCheck,
+  IconBan,
+  IconPackage,
+} from '../components/icons';
 
 // --- Paleta (valores que Tailwind no cubre) ---
 const PRIMARY = '#2097A9';
@@ -25,12 +41,12 @@ const PRIMARY_LIGHT_BG = '#e8f6f8';
 const PRIMARY_LIGHT_TEXT = '#2097A9';
 
 const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: '▣' },
-  { id: 'rubros', label: 'Rubros', icon: '🏷️' },
-  { id: 'empresas', label: 'Empresas', icon: '🏢' },
-  { id: 'ofertas', label: 'Ofertas', icon: '🎫', badgeKey: 'ofertasPendientes' },
-  { id: 'clientes', label: 'Clientes', icon: '👥' },
-  { id: 'cupones', label: 'Cupones', icon: '🎟️' },
+  { id: 'dashboard', label: 'Dashboard', Icon: IconNavDashboard },
+  { id: 'rubros', label: 'Rubros', Icon: IconNavTag },
+  { id: 'empresas', label: 'Empresas', Icon: IconNavBuilding },
+  { id: 'ofertas', label: 'Ofertas', Icon: IconNavTicket, badgeKey: 'ofertasPendientes' },
+  { id: 'clientes', label: 'Clientes', Icon: IconNavUsers },
+  { id: 'cupones', label: 'Cupones', Icon: IconNavCoupon },
 ];
 
 const SECTION_TITLES = {
@@ -229,7 +245,7 @@ export default function CuponiaAdminDashboard() {
             return (
               <NavItem
                 key={item.id}
-                icon={item.icon}
+                Icon={item.Icon}
                 label={item.label}
                 badge={showBadge ? ofertasPendientes : null}
                 isActive={isActive}
@@ -246,12 +262,10 @@ export default function CuponiaAdminDashboard() {
             onClick={() => setSidebarCollapsed((c) => !c)}
             className="w-full flex items-center justify-center gap-2 py-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-sm"
           >
-            <span
-              className="transition-transform duration-300 inline-block"
+            <IconArrowLeft
+              className="w-5 h-5 transition-transform duration-300 shrink-0"
               style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            >
-              ←
-            </span>
+            />
             {!sidebarCollapsed && <span>Colapsar</span>}
           </button>
         </div>
@@ -336,7 +350,7 @@ export default function CuponiaAdminDashboard() {
   );
 }
 
-function NavItem({ icon, label, badge, isActive, collapsed, onClick }) {
+function NavItem({ Icon, label, badge, isActive, collapsed, onClick }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -359,8 +373,8 @@ function NavItem({ icon, label, badge, isActive, collapsed, onClick }) {
             : undefined
         }
       >
-        <span className="shrink-0 w-6 text-center text-lg relative inline-block">
-          {icon}
+        <span className="shrink-0 w-6 h-6 flex items-center justify-center relative text-current">
+          <Icon className="w-[18px] h-[18px]" />
           {badge != null && collapsed && (
             <span
               className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full"
@@ -423,7 +437,13 @@ function ConfirmModal({ accion, oferta, onConfirm, onCancel }) {
         className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-center text-4xl mb-4">{isAprobar ? '✅' : '🚫'}</div>
+        <div className="flex justify-center mb-4">
+          {isAprobar ? (
+            <IconCircleCheck className="w-14 h-14 text-green-600" />
+          ) : (
+            <IconBan className="w-14 h-14 text-red-600" />
+          )}
+        </div>
         <h3 className="font-bold text-slate-900 text-lg mb-1">
           {isAprobar ? 'Aprobar oferta' : 'Rechazar oferta'}
         </h3>
@@ -544,9 +564,10 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
           <button
             type="button"
             onClick={() => onNavigate('ofertas')}
-            className="text-[#2097A9] font-semibold hover:underline"
+            className="inline-flex items-center gap-1 text-[#2097A9] font-semibold hover:underline"
           >
-            Ir a Ofertas →
+            Ir a Ofertas
+            <IconArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       )}
@@ -647,16 +668,18 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
                     <button
                       type="button"
                       onClick={() => setModal({ accion: 'aprobar', oferta: o })}
-                      className="px-2 py-1 rounded text-green-700 bg-green-100 hover:bg-green-200 text-sm font-medium"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded text-green-700 bg-green-100 hover:bg-green-200 text-sm font-medium"
                     >
-                      ✓ Aprobar
+                      <IconCheck className="w-3.5 h-3.5 shrink-0" />
+                      Aprobar
                     </button>
                     <button
                       type="button"
                       onClick={() => setModal({ accion: 'rechazar', oferta: o })}
-                      className="px-2 py-1 rounded text-red-700 bg-red-100 hover:bg-red-200 text-sm font-medium"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded text-red-700 bg-red-100 hover:bg-red-200 text-sm font-medium"
                     >
-                      ✗ Rechazar
+                      <IconX className="w-3.5 h-3.5 shrink-0" />
+                      Rechazar
                     </button>
                   </div>
                 </li>
@@ -1087,25 +1110,28 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
                           <button
                             type="button"
                             onClick={() => setModal({ accion: 'aprobar', oferta: o })}
-                            className="mr-1 px-2 py-1 rounded text-green-700 bg-green-100 hover:bg-green-200 text-sm"
+                            className="mr-1 inline-flex items-center gap-1 px-2 py-1 rounded text-green-700 bg-green-100 hover:bg-green-200 text-sm"
                           >
-                            ✓ aprobar
+                            <IconCheck className="w-3.5 h-3.5 shrink-0" />
+                            aprobar
                           </button>
                           <button
                             type="button"
                             onClick={() => setModal({ accion: 'rechazar', oferta: o })}
-                            className="mr-1 px-2 py-1 rounded text-red-700 bg-red-100 hover:bg-red-200 text-sm"
+                            className="mr-1 inline-flex items-center gap-1 px-2 py-1 rounded text-red-700 bg-red-100 hover:bg-red-200 text-sm"
                           >
-                            ✗ rechazar
+                            <IconX className="w-3.5 h-3.5 shrink-0" />
+                            rechazar
                           </button>
                         </>
                       )}
                       <button
                         type="button"
                         onClick={() => openEditForm(o)}
-                        className="px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"
                       >
-                        ✎ editar
+                        <IconPencil className="w-3.5 h-3.5 shrink-0" />
+                        editar
                       </button>
                     </td>
                   </tr>
@@ -1336,7 +1362,6 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
   const rubrosConDefault = rubros.map((r) => ({
     ...r,
     nombre: r.nombre ?? '',
-    icono: r.icono ?? '📦',
     empresas: r.empresas ?? 0,
     ofertas: r.ofertas ?? 0,
     activo: r.activo !== false,
@@ -1376,7 +1401,13 @@ function RubrosSection({ rubros, setRubros, onRefetch }) {
             className={`bg-white border border-slate-200 rounded-2xl p-5 shadow-sm ${!r.activo ? 'opacity-60' : ''}`}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl">{r.icono}</span>
+              <span className="inline-flex items-center justify-center w-9 h-9 text-slate-600">
+                {r.icono ? (
+                  <span className="text-2xl leading-none">{r.icono}</span>
+                ) : (
+                  <IconPackage className="w-8 h-8 text-slate-500" />
+                )}
+              </span>
               <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-xs">{r.empresas} emp · {r.ofertas} of.</span>
             </div>
             {editandoId === r.id ? (

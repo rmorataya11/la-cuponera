@@ -6,6 +6,7 @@ import {
   getEmpresas,
   filterOfertasVigentes,
 } from '../services/ofertasService';
+import { IconAlertTriangle, IconArrowRight, IconNavTicket } from '../components/icons';
 
 function formatPrecio(val) {
   if (val == null || val === '') return '—';
@@ -98,7 +99,7 @@ export default function OfertasPage() {
   if (error) {
     return (
       <div className="rounded-xl bg-red-50 border border-red-100 px-5 py-6 text-red-700 text-sm flex flex-col items-center gap-3">
-        <span className="text-red-400 text-2xl" aria-hidden>⚠</span>
+        <IconAlertTriangle className="w-8 h-8 text-red-400 shrink-0" aria-hidden />
         <p>{error}</p>
       </div>
     );
@@ -184,7 +185,9 @@ export default function OfertasPage() {
 
         {filtered.length === 0 ? (
           <div className="rounded-2xl bg-slate-50 border border-slate-100 px-8 py-16 text-center">
-            <div className="text-4xl mb-4 opacity-60" aria-hidden>🎫</div>
+            <div className="flex justify-center mb-4 opacity-60" aria-hidden>
+              <IconNavTicket className="w-14 h-14 text-slate-500" />
+            </div>
             <h2 className="text-lg font-semibold text-slate-700 mb-2">No hay ofertas disponibles</h2>
             <p className="text-slate-500 text-sm max-w-sm mx-auto">
               Probá quitar filtros o cambiar la búsqueda. Pronto sumaremos más ofertas.
@@ -226,7 +229,7 @@ export default function OfertasPage() {
                       />
                     ) : null}
                     <div className={`absolute inset-0 flex items-center justify-center text-slate-300 ${fotoURL ? 'hidden' : ''}`} aria-hidden>
-                      <span className="text-5xl">🎫</span>
+                      <IconNavTicket className="w-20 h-20 opacity-90" />
                     </div>
                     {descuento != null && (
                       <span className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-green-600 text-white text-xs font-bold shadow">
@@ -256,9 +259,9 @@ export default function OfertasPage() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-4 text-sm font-medium text-[#2097A9] group-hover:text-[#1a7a89] flex items-center gap-1">
+                    <p className="mt-4 text-sm font-medium text-[#2097A9] group-hover:text-[#1a7a89] inline-flex items-center gap-1">
                       Ver oferta
-                      <span className="inline-block group-hover:translate-x-0.5 transition-transform">→</span>
+                      <IconArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                     </p>
                   </div>
                 </Link>

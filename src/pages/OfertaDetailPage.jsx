@@ -7,6 +7,7 @@ import {
   getRubroById,
   filterOfertasVigentes,
 } from '../services/ofertasService';
+import { IconArrowLeft } from '../components/icons';
 
 export default function OfertaDetailPage() {
   const { id } = useParams();
@@ -65,8 +66,9 @@ export default function OfertaDetailPage() {
     return (
       <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
-          ← Volver a ofertas
+        <Link to="/ofertas" className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
+          <IconArrowLeft className="w-4 h-4 shrink-0" />
+          Volver a ofertas
         </Link>
       </div>
     );
@@ -76,9 +78,10 @@ export default function OfertaDetailPage() {
     <div className="max-w-2xl">
       <Link
         to="/ofertas"
-        className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 mb-6 transition-colors duration-150"
       >
-        ← Volver a ofertas
+        <IconArrowLeft className="w-4 h-4 shrink-0" />
+        Volver a ofertas
       </Link>
 
       <article className="bg-white rounded-xl border border-slate-200/80 shadow-card overflow-hidden">

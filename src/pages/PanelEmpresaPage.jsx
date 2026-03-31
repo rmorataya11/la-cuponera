@@ -21,6 +21,7 @@ import {
   deleteEmpleado,
 } from '../services/adminService';
 import { setEmpleadoByUid } from '../services/canjeService';
+import { IconPencil } from '../components/icons';
 
 const PRIMARY = '#2097A9';
 const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
@@ -480,7 +481,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
             {error.includes('adminUid') && user?.uid && empresa?.id && (
               <p className="mt-2 pt-2 border-t border-red-200 text-xs">
                 <strong>Para verificar en Firebase:</strong> Tu UID es <code className="bg-red-100 px-1 rounded">{user.uid}</code>. 
-                En Firestore → empresas → documento con id <code className="bg-red-100 px-1 rounded">{empresa.id}</code> el campo <code>adminUid</code> debe ser exactamente ese texto (sin espacios). 
+                En Firestore, colección <code className="bg-red-100 px-1 rounded">empresas</code>, documento con id <code className="bg-red-100 px-1 rounded">{empresa.id}</code>: el campo <code>adminUid</code> debe ser exactamente ese texto (sin espacios). 
                 Publicá las reglas con <code>firebase deploy --only firestore:rules</code>.
               </p>
             )}
@@ -657,9 +658,10 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
                         <button
                           type="button"
                           onClick={() => openEditForm(o)}
-                          className="px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"
                         >
-                          ✎ editar
+                          <IconPencil className="w-3.5 h-3.5 shrink-0" />
+                          editar
                         </button>
                       </td>
                     </tr>
@@ -769,7 +771,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
                     <td className="py-3 px-4 text-slate-600">{e.apellidos || '—'}</td>
                     <td className="py-3 px-4 text-slate-600">{e.correo || '—'}</td>
                     <td className="py-3 px-4 text-right">
-                      <button type="button" onClick={() => openEditFormEmpleado(e)} className="mr-1 px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm">✎ editar</button>
+                      <button type="button" onClick={() => openEditFormEmpleado(e)} className="mr-1 inline-flex items-center gap-1 px-2 py-1 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 text-sm"><IconPencil className="w-3.5 h-3.5 shrink-0" />editar</button>
                       <button type="button" onClick={() => handleDeleteEmpleado(e)} className="px-2 py-1 rounded text-red-700 bg-red-100 hover:bg-red-200 text-sm">Eliminar</button>
                     </td>
                   </tr>
