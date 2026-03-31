@@ -1,10 +1,12 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -53,9 +55,27 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  /**
+   * Envía el correo; el enlace redirige a tu sitio (/restablecer-contrasena) con ?mode=resetPassword&oobCode=...
+   * (el dominio debe estar en Authentication → Settings → Authorized domains).
+   */
   function resetPassword(email) {
-    return sendPasswordResetEmail(auth, email);
+    const url =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/restablecer-contrasena`
+        : undefined;
+    const actionCodeSettings = url
+      ? { url, handleCodeInApp: false }
+      : undefined;
+    return sendPasswordResetEmail(auth, email, actionCodeSettings);
   }
+
+  const validatePasswordResetCode = useCallback((oobCode) => verifyPasswordResetCode(auth, oobCode), []);
+
+  const finalizePasswordReset = useCallback(
+    (oobCode, newPassword) => confirmPasswordReset(auth, oobCode, newPassword),
+    []
+  );
 
   const value = {
     user,
@@ -64,6 +84,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     resetPassword,
+    validatePasswordResetCode,
+    finalizePasswordReset,
   };
 
   return (
