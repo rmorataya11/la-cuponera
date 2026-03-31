@@ -3,6 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getRolUsuario } from '../services/rolesService';
 import { getClienteByUid, getEmpresaByAdminUid } from '../services/adminService';
+import HeroBackground from './HeroBackground';
 
 function NavLink({ to, children }) {
   const location = useLocation();
@@ -79,31 +80,7 @@ export default function Layout() {
 
   return (
     <div className={`min-h-screen flex flex-col relative ${isHome ? '' : 'bg-slate-50/80'}`}>
-      {isHome && (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-white to-blue-50/90" />
-          <div
-            className="absolute -top-32 -right-24 h-[min(55vw,28rem)] w-[min(55vw,28rem)] rounded-full bg-blue-800/[0.06] blur-2xl"
-            aria-hidden
-          />
-          <div
-            className="absolute bottom-0 left-0 right-0 h-[min(28vh,200px)] text-blue-900/[0.07]"
-            aria-hidden
-          >
-            <svg
-              className="h-full w-full"
-              viewBox="0 0 1440 120"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill="currentColor"
-                d="M0,48L60,52C120,56,240,64,360,58.7C480,53,600,43,720,42.7C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
-              />
-            </svg>
-          </div>
-        </div>
-      )}
+      {isHome && <HeroBackground />}
       <header className={`border-b border-slate-200/60 sticky top-0 z-20 ${isHome ? 'bg-white/80 backdrop-blur-md' : 'bg-white/90 backdrop-blur-sm'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
           <Link

@@ -35,8 +35,9 @@ export default {
           '100%': { opacity: '1' },
         },
         'float': {
-          '0%, 100%': { transform: 'translateY(0) scale(1)' },
-          '50%': { transform: 'translateY(-14px) scale(1.05)' },
+          '0%': { transform: 'translateY(2px)' },
+          '50%': { transform: 'translateY(-3px)' },
+          '100%': { transform: 'translateY(1px)' },
         },
       },
       animation: {
