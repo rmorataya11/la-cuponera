@@ -455,15 +455,16 @@ function ConfirmModal({ accion, oferta, onConfirm, onCancel }) {
   );
 }
 
-// --- MiniBarChart: barras proporcionales; solo los días con ventas se marcan con color. ---
+// --- MiniBarChart: barras proporcionales; tooltip en flujo (no arriba del gráfico) para no recortarlo con overflow-x-auto del padre. ---
 function MiniBarChart({ data }) {
   const max = Math.max(...data.map((d) => d.cupones), 1);
   const [hovered, setHovered] = useState(null);
   const minBarWidth = data.length > 14 ? 8 : 0; // mes/año: barras con ancho mínimo para no comprimir demasiado
+  const barMaxPx = 56;
   return (
-    <div className="flex items-end gap-1 h-16 min-w-0" style={minBarWidth ? { minWidth: data.length * (minBarWidth + 4) } : undefined}>
+    <div className="flex items-end gap-1 min-w-0" style={minBarWidth ? { minWidth: data.length * (minBarWidth + 4) } : undefined}>
       {data.map((d, i) => {
-        const h = max > 0 ? (d.cupones / max) * 64 : 0;
+        const h = max > 0 ? (d.cupones / max) * barMaxPx : 0;
         const hasVentas = d.cupones > 0;
         const isHover = hovered === i;
         return (
@@ -473,20 +474,25 @@ function MiniBarChart({ data }) {
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
           >
+            <div className="relative w-full flex flex-col items-center justify-end" style={{ height: barMaxPx }}>
+              <div
+                className="w-full rounded-t transition-all"
+                style={{
+                  height: hasVentas ? Math.max(h, 6) : 0,
+                  backgroundColor: hasVentas ? PRIMARY : 'transparent',
+                }}
+              />
+            </div>
             {isHover && (
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-white border border-slate-200 rounded shadow text-slate-900 text-xs z-10 whitespace-nowrap">
+              <div
+                className="mt-1 max-w-[min(100vw-2rem,12rem)] rounded-md border border-slate-600 bg-slate-900 px-2 py-1.5 text-center text-xs font-medium leading-snug text-white shadow-lg z-20"
+                role="tooltip"
+              >
                 {d.cupones} cupón{d.cupones !== 1 ? 'es' : ''} vendido{d.cupones !== 1 ? 's' : ''}
                 {(d.ingresos ?? 0) > 0 && ` · $${(d.ingresos ?? 0).toLocaleString()}`}
               </div>
             )}
-            <div
-              className="w-full rounded-t transition-all"
-              style={{
-                height: hasVentas ? Math.max(h, 6) : 0,
-                backgroundColor: hasVentas ? PRIMARY : 'transparent',
-              }}
-            />
-            <span className="text-xs text-slate-400 mt-1 truncate w-full text-center">{d.label}</span>
+            <span className="text-xs text-slate-400 mt-1 truncate w-full text-center leading-tight">{d.label}</span>
           </div>
         );
       })}
