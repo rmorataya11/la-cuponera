@@ -87,68 +87,68 @@ function IconSparkle({ className }) {
 
 const ITEMS = [
   // top-left cluster
-  { El: IconPercentCircle, x: 23, y: 5, w: 66, rot: 0, color: "#2097A9", op: 0.38, d: 0.0, t: 4.2 },
-  { El: IconPriceTag, x: 32, y: 11, w: 98, rot: -8, color: "#2097A9", op: 0.95, d: 0.2, t: 4.8 },
-  { El: IconRoundedSquare, x: 16, y: 10, w: 30, rot: -8, color: "#2097A9", op: 0.78, d: 0.8, t: 4.1 },
-  { El: IconPercentCircle, x: 10, y: 16, w: 34, rot: 0, color: "#2097A9", op: 0.66, d: 1.1, t: 4.9 },
-  { El: IconSparkle, x: 27, y: 20, w: 24, rot: 0, color: "#f4f6f5", op: 0.88, d: 0.6, t: 5.0 },
+  { Glyph: IconPercentCircle, x: 23, y: 5, w: 66, rot: 0, color: "#2097A9", op: 0.38, d: 0.0, t: 4.2 },
+  { Glyph: IconPriceTag, x: 32, y: 11, w: 98, rot: -8, color: "#2097A9", op: 0.95, d: 0.2, t: 4.8 },
+  { Glyph: IconRoundedSquare, x: 16, y: 10, w: 30, rot: -8, color: "#2097A9", op: 0.78, d: 0.8, t: 4.1 },
+  { Glyph: IconPercentCircle, x: 10, y: 16, w: 34, rot: 0, color: "#2097A9", op: 0.66, d: 1.1, t: 4.9 },
+  { Glyph: IconSparkle, x: 27, y: 20, w: 24, rot: 0, color: "#f4f6f5", op: 0.88, d: 0.6, t: 5.0 },
 
   // bottom-left cluster
-  { El: IconPriceTag, x: 6, y: 86, w: 108, rot: 6, color: "#2097A9", op: 0.92, d: 0.6, t: 4.6 },
-  { El: IconPriceTag, x: 17, y: 92, w: 90, rot: -8, color: "#e8d8bf", op: 0.78, d: 1.0, t: 5.0 },
-  { El: IconPercentCircle, x: 31, y: 80, w: 70, rot: -10, color: "#2097A9", op: 0.78, d: 0.4, t: 4.4 },
-  { El: IconPercentWithArrow, x: 15, y: 64, w: 78, rot: -4, color: "#2097A9", op: 0.95, d: 0.9, t: 4.7 },
-  { El: IconArrowUpRight, x: 6, y: 70, w: 38, rot: -12, color: "#2097A9", op: 0.8, d: 0.1, t: 4.1 },
-  { El: IconArrowUpRight, x: 18, y: 84, w: 42, rot: 0, color: "#2097A9", op: 0.88, d: 0.5, t: 4.9 },
-  { El: IconRoundedSquare, x: 6, y: 74, w: 44, rot: -10, color: "#2097A9", op: 0.92, d: 1.2, t: 4.2 },
-  { El: IconFilledSquare, x: 2, y: 76, w: 52, rot: -8, color: "#2097A9", op: 0.95, d: 0.8, t: 5.1 },
-  { El: IconFilledSquare, x: 28, y: 89, w: 54, rot: -8, color: "#2097A9", op: 0.88, d: 0.3, t: 4.5 },
-  { El: IconRoundedSquare, x: 25, y: 83, w: 46, rot: -10, color: "#2097A9", op: 0.9, d: 0.7, t: 4.0 },
-  { El: IconCheck, x: 22, y: 78, w: 42, rot: 0, color: "#2097A9", op: 0.9, d: 1.3, t: 4.3 },
-  { El: IconRoundedSquare, x: 13, y: 98, w: 32, rot: -10, color: "#d8c6aa", op: 0.72, d: 1.1, t: 4.8 },
-  { El: IconPercentCircle, x: 37, y: 98, w: 56, rot: 0, color: "#2097A9", op: 0.95, d: 0.2, t: 5.2 },
-  { El: IconPriceTag, x: 37, y: 94, w: 56, rot: 18, color: "#2097A9", op: 0.85, d: 0.9, t: 4.3 },
-  { El: IconRoundedSquare, x: 9, y: 66, w: 26, rot: -10, color: "#2097A9", op: 0.72, d: 0.4, t: 4.2 },
-  { El: IconCheck, x: 3, y: 69, w: 24, rot: 0, color: "#2097A9", op: 0.8, d: 1.0, t: 4.8 },
-  { El: IconSparkle, x: 12, y: 74, w: 20, rot: 0, color: "#f6f4ee", op: 0.86, d: 1.2, t: 4.6 },
-  { El: IconRoundedSquare, x: 20, y: 72, w: 22, rot: 4, color: "#d9cdb7", op: 0.72, d: 0.7, t: 5.1 },
-  { El: IconPercentCircle, x: 6, y: 90, w: 36, rot: 0, color: "#2097A9", op: 0.68, d: 0.3, t: 4.3 },
-  { El: IconSparkle, x: 24, y: 95, w: 22, rot: 0, color: "#fff6e8", op: 0.9, d: 1.3, t: 5.0 },
+  { Glyph: IconPriceTag, x: 6, y: 86, w: 108, rot: 6, color: "#2097A9", op: 0.92, d: 0.6, t: 4.6 },
+  { Glyph: IconPriceTag, x: 17, y: 92, w: 90, rot: -8, color: "#e8d8bf", op: 0.78, d: 1.0, t: 5.0 },
+  { Glyph: IconPercentCircle, x: 31, y: 80, w: 70, rot: -10, color: "#2097A9", op: 0.78, d: 0.4, t: 4.4 },
+  { Glyph: IconPercentWithArrow, x: 15, y: 64, w: 78, rot: -4, color: "#2097A9", op: 0.95, d: 0.9, t: 4.7 },
+  { Glyph: IconArrowUpRight, x: 6, y: 70, w: 38, rot: -12, color: "#2097A9", op: 0.8, d: 0.1, t: 4.1 },
+  { Glyph: IconArrowUpRight, x: 18, y: 84, w: 42, rot: 0, color: "#2097A9", op: 0.88, d: 0.5, t: 4.9 },
+  { Glyph: IconRoundedSquare, x: 6, y: 74, w: 44, rot: -10, color: "#2097A9", op: 0.92, d: 1.2, t: 4.2 },
+  { Glyph: IconFilledSquare, x: 2, y: 76, w: 52, rot: -8, color: "#2097A9", op: 0.95, d: 0.8, t: 5.1 },
+  { Glyph: IconFilledSquare, x: 28, y: 89, w: 54, rot: -8, color: "#2097A9", op: 0.88, d: 0.3, t: 4.5 },
+  { Glyph: IconRoundedSquare, x: 25, y: 83, w: 46, rot: -10, color: "#2097A9", op: 0.9, d: 0.7, t: 4.0 },
+  { Glyph: IconCheck, x: 22, y: 78, w: 42, rot: 0, color: "#2097A9", op: 0.9, d: 1.3, t: 4.3 },
+  { Glyph: IconRoundedSquare, x: 13, y: 98, w: 32, rot: -10, color: "#d8c6aa", op: 0.72, d: 1.1, t: 4.8 },
+  { Glyph: IconPercentCircle, x: 37, y: 98, w: 56, rot: 0, color: "#2097A9", op: 0.95, d: 0.2, t: 5.2 },
+  { Glyph: IconPriceTag, x: 37, y: 94, w: 56, rot: 18, color: "#2097A9", op: 0.85, d: 0.9, t: 4.3 },
+  { Glyph: IconRoundedSquare, x: 9, y: 66, w: 26, rot: -10, color: "#2097A9", op: 0.72, d: 0.4, t: 4.2 },
+  { Glyph: IconCheck, x: 3, y: 69, w: 24, rot: 0, color: "#2097A9", op: 0.8, d: 1.0, t: 4.8 },
+  { Glyph: IconSparkle, x: 12, y: 74, w: 20, rot: 0, color: "#f6f4ee", op: 0.86, d: 1.2, t: 4.6 },
+  { Glyph: IconRoundedSquare, x: 20, y: 72, w: 22, rot: 4, color: "#d9cdb7", op: 0.72, d: 0.7, t: 5.1 },
+  { Glyph: IconPercentCircle, x: 6, y: 90, w: 36, rot: 0, color: "#2097A9", op: 0.68, d: 0.3, t: 4.3 },
+  { Glyph: IconSparkle, x: 24, y: 95, w: 22, rot: 0, color: "#fff6e8", op: 0.9, d: 1.3, t: 5.0 },
 
   // top-right cluster
-  { El: IconPriceTag, x: 74, y: 6, w: 92, rot: 14, color: "#2097A9", op: 0.84, d: 0.2, t: 4.5 },
-  { El: IconCheck, x: 84, y: 4, w: 48, rot: 0, color: "#2097A9", op: 0.9, d: 0.5, t: 4.7 },
-  { El: IconPercentCircle, x: 88, y: 7, w: 70, rot: 0, color: "#e5d5b8", op: 0.65, d: 1.0, t: 4.9 },
-  { El: IconPercentCircle, x: 94, y: 14, w: 82, rot: 0, color: "#2097A9", op: 0.9, d: 0.7, t: 4.6 },
-  { El: IconPercentWithArrow, x: 85, y: 28, w: 86, rot: 8, color: "#2097A9", op: 0.96, d: 0.4, t: 4.4 },
-  { El: IconPriceTag, x: 90, y: 42, w: 122, rot: 7, color: "#2097A9", op: 0.95, d: 0.8, t: 4.8 },
-  { El: IconPriceTag, x: 77, y: 24, w: 84, rot: -12, color: "#2097A9", op: 0.95, d: 1.2, t: 5.0 },
-  { El: IconPercentCircle, x: 76, y: 36, w: 76, rot: 4, color: "#2097A9", op: 0.75, d: 0.3, t: 4.1 },
-  { El: IconPriceTag, x: 72, y: 22, w: 64, rot: -10, color: "#2097A9", op: 0.75, d: 1.1, t: 4.9 },
-  { El: IconArrowUpRight, x: 80, y: 14, w: 44, rot: 0, color: "#2097A9", op: 0.72, d: 0.6, t: 4.0 },
-  { El: IconFilledSquare, x: 97, y: 7, w: 52, rot: -8, color: "#2097A9", op: 0.9, d: 1.4, t: 4.2 },
-  { El: IconFilledSquare, x: 82, y: 19, w: 44, rot: -6, color: "#2097A9", op: 0.85, d: 1.0, t: 4.6 },
-  { El: IconRoundedSquare, x: 98, y: 0.6, w: 30, rot: -8, color: "#2097A9", op: 0.86, d: 0.2, t: 4.4 },
-  { El: IconCheck, x: 81, y: 27, w: 34, rot: 0, color: "#2097A9", op: 0.9, d: 0.9, t: 4.7 },
-  { El: IconRoundedSquare, x: 98, y: 24, w: 30, rot: 0, color: "#e6d8bf", op: 0.8, d: 0.3, t: 4.6 },
-  { El: IconPercentCircle, x: 100, y: 30, w: 58, rot: 0, color: "#e8d8be", op: 0.75, d: 1.2, t: 4.8 },
-  { El: IconPriceTag, x: 97, y: 20, w: 40, rot: 10, color: "#2097A9", op: 0.82, d: 0.4, t: 4.2 },
-  { El: IconCheck, x: 95, y: 12, w: 24, rot: 0, color: "#2097A9", op: 0.82, d: 0.9, t: 4.9 },
-  { El: IconRoundedSquare, x: 93, y: 2, w: 24, rot: -6, color: "#2097A9", op: 0.8, d: 1.2, t: 4.5 },
-  { El: IconSparkle, x: 90, y: 18, w: 20, rot: 0, color: "#f9f8f1", op: 0.9, d: 0.7, t: 5.1 },
-  { El: IconRoundedSquare, x: 74, y: 11, w: 22, rot: 8, color: "#2097A9", op: 0.72, d: 0.5, t: 4.0 },
-  { El: IconCheck, x: 70, y: 29, w: 22, rot: 0, color: "#2097A9", op: 0.8, d: 1.1, t: 4.6 },
+  { Glyph: IconPriceTag, x: 74, y: 6, w: 92, rot: 14, color: "#2097A9", op: 0.84, d: 0.2, t: 4.5 },
+  { Glyph: IconCheck, x: 84, y: 4, w: 48, rot: 0, color: "#2097A9", op: 0.9, d: 0.5, t: 4.7 },
+  { Glyph: IconPercentCircle, x: 88, y: 7, w: 70, rot: 0, color: "#e5d5b8", op: 0.65, d: 1.0, t: 4.9 },
+  { Glyph: IconPercentCircle, x: 94, y: 14, w: 82, rot: 0, color: "#2097A9", op: 0.9, d: 0.7, t: 4.6 },
+  { Glyph: IconPercentWithArrow, x: 85, y: 28, w: 86, rot: 8, color: "#2097A9", op: 0.96, d: 0.4, t: 4.4 },
+  { Glyph: IconPriceTag, x: 90, y: 42, w: 122, rot: 7, color: "#2097A9", op: 0.95, d: 0.8, t: 4.8 },
+  { Glyph: IconPriceTag, x: 77, y: 24, w: 84, rot: -12, color: "#2097A9", op: 0.95, d: 1.2, t: 5.0 },
+  { Glyph: IconPercentCircle, x: 76, y: 36, w: 76, rot: 4, color: "#2097A9", op: 0.75, d: 0.3, t: 4.1 },
+  { Glyph: IconPriceTag, x: 72, y: 22, w: 64, rot: -10, color: "#2097A9", op: 0.75, d: 1.1, t: 4.9 },
+  { Glyph: IconArrowUpRight, x: 80, y: 14, w: 44, rot: 0, color: "#2097A9", op: 0.72, d: 0.6, t: 4.0 },
+  { Glyph: IconFilledSquare, x: 97, y: 7, w: 52, rot: -8, color: "#2097A9", op: 0.9, d: 1.4, t: 4.2 },
+  { Glyph: IconFilledSquare, x: 82, y: 19, w: 44, rot: -6, color: "#2097A9", op: 0.85, d: 1.0, t: 4.6 },
+  { Glyph: IconRoundedSquare, x: 98, y: 0.6, w: 30, rot: -8, color: "#2097A9", op: 0.86, d: 0.2, t: 4.4 },
+  { Glyph: IconCheck, x: 81, y: 27, w: 34, rot: 0, color: "#2097A9", op: 0.9, d: 0.9, t: 4.7 },
+  { Glyph: IconRoundedSquare, x: 98, y: 24, w: 30, rot: 0, color: "#e6d8bf", op: 0.8, d: 0.3, t: 4.6 },
+  { Glyph: IconPercentCircle, x: 100, y: 30, w: 58, rot: 0, color: "#e8d8be", op: 0.75, d: 1.2, t: 4.8 },
+  { Glyph: IconPriceTag, x: 97, y: 20, w: 40, rot: 10, color: "#2097A9", op: 0.82, d: 0.4, t: 4.2 },
+  { Glyph: IconCheck, x: 95, y: 12, w: 24, rot: 0, color: "#2097A9", op: 0.82, d: 0.9, t: 4.9 },
+  { Glyph: IconRoundedSquare, x: 93, y: 2, w: 24, rot: -6, color: "#2097A9", op: 0.8, d: 1.2, t: 4.5 },
+  { Glyph: IconSparkle, x: 90, y: 18, w: 20, rot: 0, color: "#f9f8f1", op: 0.9, d: 0.7, t: 5.1 },
+  { Glyph: IconRoundedSquare, x: 74, y: 11, w: 22, rot: 8, color: "#2097A9", op: 0.72, d: 0.5, t: 4.0 },
+  { Glyph: IconCheck, x: 70, y: 29, w: 22, rot: 0, color: "#2097A9", op: 0.8, d: 1.1, t: 4.6 },
 
   // floating accents
-  { El: IconPriceTag, x: -1, y: 44, w: 58, rot: -14, color: "#2097A9", op: 0.86, d: 0.5, t: 4.4 },
-  { El: IconFilledSquare, x: -2, y: 60, w: 30, rot: -8, color: "#2097A9", op: 0.95, d: 0.9, t: 4.5 },
-  { El: IconRoundedSquare, x: 70, y: 56, w: 64, rot: -10, color: "#2097A9", op: 0.82, d: 0.6, t: 4.2 },
-  { El: IconFilledSquare, x: 81, y: 74, w: 38, rot: -12, color: "#2097A9", op: 0.86, d: 0.4, t: 4.9 },
-  { El: IconSparkle, x: 98, y: 80, w: 52, rot: 0, color: "#fff7e6", op: 0.95, d: 0.3, t: 4.6 },
-  { El: IconSparkle, x: 98, y: 89, w: 52, rot: 0, color: "#fff7e6", op: 0.95, d: 0.8, t: 5.0 },
-  { El: IconPriceTag, x: 58, y: 8, w: 44, rot: -12, color: "#2097A9", op: 0.64, d: 0.6, t: 4.8 },
-  { El: IconArrowUpRight, x: 60, y: 50, w: 28, rot: 8, color: "#2097A9", op: 0.62, d: 0.9, t: 4.3 },
-  { El: IconSparkle, x: 54, y: 30, w: 20, rot: 0, color: "#f5f6f4", op: 0.82, d: 1.0, t: 5.0 },
+  { Glyph: IconPriceTag, x: -1, y: 44, w: 58, rot: -14, color: "#2097A9", op: 0.86, d: 0.5, t: 4.4 },
+  { Glyph: IconFilledSquare, x: -2, y: 60, w: 30, rot: -8, color: "#2097A9", op: 0.95, d: 0.9, t: 4.5 },
+  { Glyph: IconRoundedSquare, x: 70, y: 56, w: 64, rot: -10, color: "#2097A9", op: 0.82, d: 0.6, t: 4.2 },
+  { Glyph: IconFilledSquare, x: 81, y: 74, w: 38, rot: -12, color: "#2097A9", op: 0.86, d: 0.4, t: 4.9 },
+  { Glyph: IconSparkle, x: 98, y: 80, w: 52, rot: 0, color: "#fff7e6", op: 0.95, d: 0.3, t: 4.6 },
+  { Glyph: IconSparkle, x: 98, y: 89, w: 52, rot: 0, color: "#fff7e6", op: 0.95, d: 0.8, t: 5.0 },
+  { Glyph: IconPriceTag, x: 58, y: 8, w: 44, rot: -12, color: "#2097A9", op: 0.64, d: 0.6, t: 4.8 },
+  { Glyph: IconArrowUpRight, x: 60, y: 50, w: 28, rot: 8, color: "#2097A9", op: 0.62, d: 0.9, t: 4.3 },
+  { Glyph: IconSparkle, x: 54, y: 30, w: 20, rot: 0, color: "#f5f6f4", op: 0.82, d: 1.0, t: 5.0 },
 ];
 
 function pseudoRandom(index) {
@@ -161,7 +161,9 @@ export default function HeroBackground() {
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden>
       <div className="absolute inset-0 bg-gradient-to-b from-[#e4f2f4] via-[#eef6f6] to-[#FDF5E6]" />
 
-      {ITEMS.map(({ El, x, y, w, rot, color, op }, i) => {
+      {ITEMS.map((item, i) => {
+        const Svg = item.Glyph;
+        const { x, y, w, rot, color, op } = item;
         const p1 = pseudoRandom(i);
         const p2 = pseudoRandom(i + 73);
         const duration = 3.8 + p1 * 1.9; // 3.8s - 5.7s
@@ -193,7 +195,7 @@ export default function HeroBackground() {
                   transform: `rotate(${rot}deg)`,
                 }}
               >
-                <El className="h-full w-full" />
+                <Svg className="h-full w-full" />
               </div>
             </div>
           </div>

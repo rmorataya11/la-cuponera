@@ -78,7 +78,6 @@ export default function PanelEmpresaPage() {
 });
 const [credencialesCreadas, setCredencialesCreadas] = useState(null);
   const [empleadosLoadError, setEmpleadosLoadError] = useState(null);
-  const [, setAdminUidEnEmpresa] = useState(null);
   const [form, setForm] = useState({
     rubroId: '',
     titulo: '',
@@ -376,7 +375,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
         try {
           await setEmpleadoUid(newId, auth.currentUser.uid);
           await setEmpleadoByUid(auth.currentUser.uid, empleadosEmpresaId || empresa.id);
-        } catch (linkErr) {
+        } catch {
           await signOut(auth);
           setError('El empleado se creó pero no se pudo vincular la cuenta (revisá reglas de Firestore). Cerrá sesión y entrá de nuevo con tu correo de admin.');
           setSavingEmpleado(false);
@@ -385,7 +384,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
         await signOut(auth);
         try {
           await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-        } catch (signInErr) {
+        } catch {
           navigate('/iniciar-sesion', { replace: true, state: { message: 'Empleado creado. No se pudo volver a tu sesión (tu contraseña de admin no es correcta). Entrá con tu correo de admin.' } });
           setSavingEmpleado(false);
           return;

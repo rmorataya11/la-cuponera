@@ -45,7 +45,9 @@ export default function CanjearPage() {
       try {
         await ensureEmpleadoByUid(user.uid);
         if (!cancelled) await cargarCupones();
-      } catch (_) {}
+      } catch {
+        /* ensureEmpleado puede fallar sin bloquear la carga */
+      }
       if (!cancelled) setSyncing(false);
     })();
     return () => { cancelled = true; };

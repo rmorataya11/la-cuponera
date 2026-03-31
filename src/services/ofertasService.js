@@ -1,15 +1,6 @@
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const today = () => new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-
-function aFecha(obj) {
-  if (obj == null) return '';
-  if (typeof obj === 'string') return obj.slice(0, 10);
-  if (obj.toDate && typeof obj.toDate === 'function') return obj.toDate().toISOString().slice(0, 10);
-  return String(obj).slice(0, 10);
-}
-
 /**
  * Ofertas vigentes: estado aprobada y con cupones disponibles.
  * Por ahora no se filtra por fechas (inicio/fin) para evitar problemas con zona horaria o fecha del sistema.

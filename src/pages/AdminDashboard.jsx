@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import {
   getOfertasTodas,
   updateOfertaEstado,
@@ -165,8 +163,6 @@ function mapOfertasParaUI(ofertas, empresas, rubros) {
 }
 
 export default function CuponiaAdminDashboard() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [ofertas, setOfertas] = useState([]);
@@ -204,11 +200,6 @@ export default function CuponiaAdminDashboard() {
       });
     return () => { cancelled = true; };
   }, []);
-
-  function handleLogout() {
-    logout();
-    navigate('/');
-  }
 
   const ofertasPendientes = ofertas.filter((o) => o.estado === 'pendiente').length;
 
@@ -297,7 +288,6 @@ export default function CuponiaAdminDashboard() {
               {activeTab === 'rubros' && (
                 <RubrosSection
                   rubros={rubros}
-                  setRubros={setRubros}
                   onRefetch={async () => {
                     const list = await getRubros();
                     setRubros(list);
@@ -350,7 +340,7 @@ export default function CuponiaAdminDashboard() {
   );
 }
 
-function NavItem({ Icon, label, badge, isActive, collapsed, onClick }) {
+function NavItem({ Icon: Svg, label, badge, isActive, collapsed, onClick }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
@@ -374,7 +364,7 @@ function NavItem({ Icon, label, badge, isActive, collapsed, onClick }) {
         }
       >
         <span className="shrink-0 w-6 h-6 flex items-center justify-center relative text-current">
-          <Icon className="w-[18px] h-[18px]" />
+          <Svg className="w-[18px] h-[18px]" />
           {badge != null && collapsed && (
             <span
               className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full"
@@ -1285,7 +1275,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
 }
 
 // --- Sección Rubros ---
-function RubrosSection({ rubros, setRubros, onRefetch }) {
+function RubrosSection({ rubros, onRefetch }) {
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [editandoId, setEditandoId] = useState(null);
   const [editValor, setEditValor] = useState('');

@@ -71,7 +71,7 @@ export async function getCuponesDisponiblesPorEmpresa(empresaId) {
     try {
       const lista = await getCuponesDisponiblesPorEmpresaId(id, hoy);
       listas.push(lista);
-    } catch (_) {
+    } catch {
       // El empleado solo puede leer cupones de su empresaId; el otro id puede dar permission-denied
     }
   }

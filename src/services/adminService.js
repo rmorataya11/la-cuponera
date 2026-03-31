@@ -6,7 +6,6 @@ import {
   query,
   where,
   limit,
-  setDoc,
   updateDoc,
   addDoc,
   deleteDoc,
@@ -72,7 +71,7 @@ export async function updateOferta(id, data) {
   await updateDoc(docRef, {
     titulo: data.titulo ?? '',
     precioRegular: Number(data.precioRegular) || 0,
-    precioOferta: Number(data.precioOferta) ?? Number(data.precioRegular) ?? 0,
+    precioOferta: Number(data.precioOferta) || Number(data.precioRegular) || 0,
     fechaInicio: (data.fechaInicio || '').slice(0, 10),
     fechaFin: (data.fechaFin || '').slice(0, 10),
     fechaLimiteUso: (data.fechaLimiteUso || data.fechaFin || '').slice(0, 10),
@@ -89,7 +88,7 @@ export async function addOferta(data) {
   const ref = await addDoc(collection(db, 'ofertas'), {
     titulo: data.titulo || '',
     precioRegular: Number(data.precioRegular) || 0,
-    precioOferta: Number(data.precioOferta) ?? Number(data.precioRegular) ?? 0,
+    precioOferta: Number(data.precioOferta) || Number(data.precioRegular) || 0,
     fechaInicio: (data.fechaInicio || '').slice(0, 10),
     fechaFin: (data.fechaFin || '').slice(0, 10),
     fechaLimiteUso: (data.fechaLimiteUso || data.fechaFin || '').slice(0, 10),

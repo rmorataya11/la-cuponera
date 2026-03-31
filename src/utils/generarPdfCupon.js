@@ -118,7 +118,7 @@ async function blobToCoverCanvas(blob) {
       } finally {
         bmp.close();
       }
-    } catch (_) {
+    } catch {
       /* seguir con Image */
     }
   }
@@ -226,7 +226,7 @@ async function loadProductPhotoCanvas(url) {
   if (fbBlob) {
     try {
       return await blobToCoverCanvas(fbBlob);
-    } catch (_) {
+    } catch {
       /* blob obtenido pero no decodifica; seguir con fetch / Image */
     }
   }
@@ -234,7 +234,7 @@ async function loadProductPhotoCanvas(url) {
   try {
     const blob = await fetchImageBlobWithFallback(url);
     return await blobToCoverCanvas(blob);
-  } catch (_) {
+  } catch {
     /* último recurso: Image + crossOrigin */
   }
 
@@ -354,7 +354,7 @@ export async function descargarPdfCupon(cupon, oferta = {}, opciones = {}) {
       doc.setLineWidth(0.2);
       doc.roundedRect(margin - pad, logoY - pad, logoWmm + pad * 2, logoHmm + pad * 2, 2.2, 2.2, 'S');
       doc.addImage(dataUrl, 'PNG', margin, logoY, logoWmm, logoHmm, undefined, 'FAST');
-    } catch (_) {
+    } catch {
       logoWmm = 0;
     }
   }
