@@ -91,7 +91,7 @@ const ITEMS = [
   { El: IconPriceTag, x: 32, y: 11, w: 98, rot: -8, color: "#2097A9", op: 0.95, d: 0.2, t: 4.8 },
   { El: IconRoundedSquare, x: 16, y: 10, w: 30, rot: -8, color: "#2097A9", op: 0.78, d: 0.8, t: 4.1 },
   { El: IconPercentCircle, x: 10, y: 16, w: 34, rot: 0, color: "#2097A9", op: 0.66, d: 1.1, t: 4.9 },
-  { El: IconSparkle, x: 27, y: 20, w: 24, rot: 0, color: "#f4f8fb", op: 0.88, d: 0.6, t: 5.0 },
+  { El: IconSparkle, x: 27, y: 20, w: 24, rot: 0, color: "#f4f6f5", op: 0.88, d: 0.6, t: 5.0 },
 
   // bottom-left cluster
   { El: IconPriceTag, x: 6, y: 86, w: 108, rot: 6, color: "#2097A9", op: 0.92, d: 0.6, t: 4.6 },
@@ -148,7 +148,7 @@ const ITEMS = [
   { El: IconSparkle, x: 98, y: 89, w: 52, rot: 0, color: "#fff7e6", op: 0.95, d: 0.8, t: 5.0 },
   { El: IconPriceTag, x: 58, y: 8, w: 44, rot: -12, color: "#2097A9", op: 0.64, d: 0.6, t: 4.8 },
   { El: IconArrowUpRight, x: 60, y: 50, w: 28, rot: 8, color: "#2097A9", op: 0.62, d: 0.9, t: 4.3 },
-  { El: IconSparkle, x: 54, y: 30, w: 20, rot: 0, color: "#f5fafb", op: 0.82, d: 1.0, t: 5.0 },
+  { El: IconSparkle, x: 54, y: 30, w: 20, rot: 0, color: "#f5f6f4", op: 0.82, d: 1.0, t: 5.0 },
 ];
 
 function pseudoRandom(index) {
@@ -159,7 +159,7 @@ function pseudoRandom(index) {
 export default function HeroBackground() {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#E0F0F7] via-[#eff8fb] to-[#FDF5E6]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#e4f2f4] via-[#eef6f6] to-[#FDF5E6]" />
 
       {ITEMS.map(({ El, x, y, w, rot, color, op }, i) => {
         const p1 = pseudoRandom(i);

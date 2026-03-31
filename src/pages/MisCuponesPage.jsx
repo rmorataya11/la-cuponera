@@ -71,7 +71,7 @@ export default function MisCuponesPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-8 h-8 border-2 border-slate-200 border-t-primary-700 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-[#2097A9] rounded-full animate-spin" />
         <p className="text-sm text-slate-500">Cargando tus cupones...</p>
       </div>
     );
@@ -148,7 +148,7 @@ export default function MisCuponesPage() {
                       console.error(err);
                     }
                   }}
-                  className="shrink-0 px-4 py-2 text-sm font-medium text-primary-700 border border-primary-300 rounded-lg hover:bg-primary-100 transition-colors duration-150"
+                  className="shrink-0 px-4 py-2 text-sm font-medium text-[#2097A9] border border-[#75b8c6] rounded-lg hover:bg-[#e8f4f6] transition-colors duration-150"
                 >
                   Descargar PDF
                 </button>

@@ -53,7 +53,7 @@ export default function RestablecerContrasenaPage() {
               Revisá tu correo. Te enviamos un enlace para restablecer tu contraseña. Si no lo ves, revisá la carpeta de spam.
             </div>
             <p className="text-center text-sm text-slate-500">
-              <Link to="/iniciar-sesion" className="font-medium text-primary-700 hover:text-primary-800">
+              <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-[#1a7a89]">
                 Volver a iniciar sesión
               </Link>
             </p>
@@ -78,7 +78,7 @@ export default function RestablecerContrasenaPage() {
                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
                 placeholder="correo@ejemplo.com"
                 required
-                className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-primary-600 focus:outline-none text-slate-900"
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900"
               />
             </div>
 
@@ -94,7 +94,7 @@ export default function RestablecerContrasenaPage() {
 
         {!success && (
           <p className="mt-6 text-center text-sm text-slate-500">
-            <Link to="/iniciar-sesion" className="font-medium text-primary-700 hover:text-primary-800">
+            <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-[#1a7a89]">
               Volver a iniciar sesión
             </Link>
           </p>

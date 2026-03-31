@@ -126,7 +126,7 @@ export default function ComprarPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-8 h-8 border-2 border-slate-200 border-t-primary-700 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-[#2097A9] rounded-full animate-spin" />
         <p className="text-sm text-slate-500">Cargando...</p>
       </div>
     );
@@ -136,7 +136,7 @@ export default function ComprarPage() {
     return (
       <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-primary-700 hover:text-primary-800">
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
           ← Volver a ofertas
         </Link>
       </div>
@@ -147,7 +147,7 @@ export default function ComprarPage() {
     return (
       <div className="rounded-xl bg-white border border-slate-200/80 px-6 py-8 text-slate-600 text-sm">
         Esta oferta ya no está disponible para compra.
-        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-primary-700 hover:text-primary-800">
+        <Link to={`/ofertas/${id}`} className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
           ← Volver al detalle
         </Link>
       </div>

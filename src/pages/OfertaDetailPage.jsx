@@ -55,7 +55,7 @@ export default function OfertaDetailPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-8 h-8 border-2 border-slate-200 border-t-primary-700 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-slate-200 border-t-[#2097A9] rounded-full animate-spin" />
         <p className="text-sm text-slate-500">Cargando...</p>
       </div>
     );
@@ -65,7 +65,7 @@ export default function OfertaDetailPage() {
     return (
       <div className="rounded-xl bg-red-50/80 border border-red-100 px-5 py-4 text-red-700 text-sm">
         {error || 'Oferta no encontrada.'}
-        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-primary-700 hover:text-primary-800">
+        <Link to="/ofertas" className="mt-3 inline-block text-sm font-medium text-[#2097A9] hover:text-[#1a7a89]">
           ← Volver a ofertas
         </Link>
       </div>
@@ -101,7 +101,7 @@ export default function OfertaDetailPage() {
           {empresa && <p className="text-slate-600 mt-1">{empresa.nombre}</p>}
 
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-2xl font-semibold text-primary-700">
+            <span className="text-2xl font-semibold text-[#2097A9]">
               ${typeof oferta.precioOferta === 'number' ? oferta.precioOferta.toFixed(2) : oferta.precioOferta}
             </span>
             {typeof oferta.precioRegular === 'number' && (
@@ -144,7 +144,7 @@ export default function OfertaDetailPage() {
               <p className="text-slate-500 text-sm">Esta oferta ya no está disponible.</p>
             ) : (
               <p className="text-slate-600 text-sm">
-                <Link to="/iniciar-sesion" className="font-medium text-primary-700 hover:text-primary-800">
+                <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-[#1a7a89]">
                   Inicia sesión
                 </Link>
                 {' '}para comprar esta oferta.

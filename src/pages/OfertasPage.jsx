@@ -77,7 +77,7 @@ export default function OfertasPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <div className="w-10 h-10 border-2 border-slate-200 border-t-primary-600 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-slate-200 border-t-[#2097A9] rounded-full animate-spin" />
         <p className="text-sm text-slate-500">Cargando ofertas...</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 w-full mt-8">
           {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -121,14 +121,14 @@ export default function OfertasPage() {
               placeholder="Buscar por oferta, empresa o rubro..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500 transition-shadow"
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2097A9]/25 focus:border-[#2097A9] transition-shadow"
             />
           </div>
           <select
             id="rubro"
             value={rubroId}
             onChange={(e) => setRubroId(e.target.value)}
-            className="w-full sm:w-auto min-w-[180px] px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-500"
+            className="w-full sm:w-auto min-w-[180px] px-4 py-2.5 border border-slate-200 rounded-xl bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#2097A9]/25 focus:border-[#2097A9]"
             aria-label="Filtrar por rubro"
           >
             <option value="">Todos los rubros</option>
@@ -148,7 +148,7 @@ export default function OfertasPage() {
               onClick={() => setRubroId('')}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 !rubroId
-                  ? 'bg-primary-700 text-white'
+                  ? 'bg-[#2097A9] text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -161,7 +161,7 @@ export default function OfertasPage() {
                 onClick={() => setRubroId(rubroId === r.id ? '' : r.id)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   rubroId === r.id
-                    ? 'bg-primary-700 text-white'
+                    ? 'bg-[#2097A9] text-white'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
@@ -192,7 +192,7 @@ export default function OfertasPage() {
             <button
               type="button"
               onClick={() => { setRubroId(''); setBusqueda(''); }}
-              className="mt-6 px-5 py-2.5 rounded-lg text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
+              className="mt-6 px-5 py-2.5 rounded-lg text-sm font-medium text-[#2097A9] bg-[#e8f4f6] hover:bg-[#d1e6ea] transition-colors"
             >
               Ver todas
             </button>
@@ -240,14 +240,14 @@ export default function OfertasPage() {
                     )}
                   </div>
                   <div className="p-5">
-                    <h2 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-primary-700 transition-colors">
+                    <h2 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-[#1a7a89] transition-colors">
                       {o.titulo}
                     </h2>
                     {empresaMap[o.empresaId] && (
                       <p className="text-sm text-slate-500 mt-1">{empresaMap[o.empresaId]}</p>
                     )}
                     <div className="mt-4 flex items-baseline gap-2 flex-wrap">
-                      <span className="text-xl font-bold text-primary-700">
+                      <span className="text-xl font-bold text-[#2097A9]">
                         {formatPrecio(precioOferta)}
                       </span>
                       {Number(precioRegular) > 0 && (
@@ -256,7 +256,7 @@ export default function OfertasPage() {
                         </span>
                       )}
                     </div>
-                    <p className="mt-4 text-sm font-medium text-primary-600 group-hover:text-primary-700 flex items-center gap-1">
+                    <p className="mt-4 text-sm font-medium text-[#2097A9] group-hover:text-[#1a7a89] flex items-center gap-1">
                       Ver oferta
                       <span className="inline-block group-hover:translate-x-0.5 transition-transform">→</span>
                     </p>

@@ -63,8 +63,8 @@ a {
 /* En @apply, evitar hover:+primary-* (Tailwind/PostCSS no siempre las genera en CSS compuesto) */
 .btn-secondary {
   @apply inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-[#2097A9]
-    bg-white rounded-lg border border-[#a3dde4] transition-all duration-200
-    hover:bg-[#e8f6f8] hover:border-[#75ccd3]
+    bg-white rounded-lg     border border-[#a3cfd8] transition-all duration-200
+    hover:bg-[#e8f4f6] hover:border-[#75b8c6]
     hover:scale-[1.02] active:scale-[0.98]
     disabled:hover:scale-100;
 }

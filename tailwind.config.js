@@ -10,14 +10,14 @@ export default {
         sans: ['DM Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
-        /** Marca Cuponía — #2097A9 */
+        /** Marca Cuponía — #2097A9 (teal; evitar tintes azul frío en 50–200) */
         primary: {
-          50: '#e8f6f8',
-          100: '#d1eef2',
-          200: '#a3dde4',
-          300: '#75ccd3',
-          400: '#47bbc2',
-          500: '#2aa4b3',
+          50: '#e8f4f6',
+          100: '#d1e6ea',
+          200: '#a3cfd8',
+          300: '#75b8c6',
+          400: '#47a1b4',
+          500: '#2a94a8',
           600: '#2097A9',
           700: '#1a7a89',
           800: '#166b78',

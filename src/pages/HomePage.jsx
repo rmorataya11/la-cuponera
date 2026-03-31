@@ -46,7 +46,7 @@ export default function HomePage() {
             style={{ animationDelay: '0.6s' }}
           >
             ¿Ya tienes cuenta?{' '}
-            <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-primary-700 transition-colors">
+            <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-[#1a7a89] transition-colors">
               Inicia sesión
             </Link>
           </p>

@@ -398,7 +398,7 @@ function Badge({ estado }) {
     aprobada: 'bg-green-100 text-green-700',
     pendiente: 'bg-amber-100 text-amber-700',
     rechazada: 'bg-red-100 text-red-700',
-    disponible: 'bg-primary-100 text-primary-700',
+    disponible: 'bg-[#d1e6ea] text-[#1a7a89]',
     canjeado: 'bg-violet-100 text-violet-700',
     vencido: 'bg-slate-100 text-slate-500',
   };
@@ -533,12 +533,12 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
   return (
     <div className="space-y-6">
       {ofertasPendientes > 0 && (
-        <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center justify-between">
-          <p className="text-primary-700 font-medium">Hay {ofertasPendientes} oferta(s) pendiente(s) de aprobación.</p>
+        <div className="bg-[#e8f4f6] border border-[#a3cfd8] rounded-xl p-4 flex items-center justify-between">
+          <p className="text-[#1a7a89] font-medium">Hay {ofertasPendientes} oferta(s) pendiente(s) de aprobación.</p>
           <button
             type="button"
             onClick={() => onNavigate('ofertas')}
-            className="text-primary-600 font-semibold hover:underline"
+            className="text-[#2097A9] font-semibold hover:underline"
           >
             Ir a Ofertas →
           </button>
@@ -546,7 +546,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="rounded-2xl p-5 shadow-sm border border-primary-200 bg-primary-100">
+        <div className="rounded-2xl p-5 shadow-sm border border-[#a3cfd8] bg-[#d1e6ea]">
           <p className="text-2xl font-bold text-slate-900">{cupones.length.toLocaleString()}</p>
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Cupones vendidos</p>
           <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
@@ -565,7 +565,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Tasa de canje</p>
           <p className="text-slate-500 text-sm mt-0.5">{canjeados} canjeados</p>
         </div>
-        <div className="rounded-2xl p-5 shadow-sm border border-primary-200 bg-primary-100">
+        <div className="rounded-2xl p-5 shadow-sm border border-[#a3cfd8] bg-[#d1e6ea]">
           <p className="text-2xl font-bold text-slate-900">{totalClientes.toLocaleString()}</p>
           <p className="text-slate-600 text-sm mt-0.5 font-medium">Usuarios registrados</p>
         </div>
@@ -672,7 +672,7 @@ function DashboardOverview({ ofertas, setOfertas, cupones = [], totalClientes = 
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-primary-600"
+                    className="h-full rounded-full bg-[#2097A9]"
                     style={{ width: `${(o.vendidos / maxVendidos) * 100}%` }}
                   />
                 </div>
@@ -1064,7 +1064,7 @@ function OfertasSection({ ofertas, setOfertas, empresas = [], rubros = [], onRef
                     <td className="py-3 px-4">
                       <div className="w-20">
                         <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-primary-500 rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-[#2097A9] rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-xs text-slate-500">{o.vendidos}{o.limite != null ? ` / ${o.limite}` : ''}</span>
                       </div>
@@ -1215,7 +1215,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <p className="text-slate-500 text-sm">Disponibles</p>
-          <p className="text-2xl font-bold text-primary-600">{disp}</p>
+          <p className="text-2xl font-bold text-[#2097A9]">{disp}</p>
         </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <p className="text-slate-500 text-sm">Canjeados</p>
@@ -1235,7 +1235,7 @@ function CuponesSection({ cupones = [], ofertas = [], clientes = [], onAsignarEm
               className={`rounded-2xl border p-4 shadow-sm ${esUrgente ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="font-mono font-semibold text-primary-700 text-sm">{c.codigo}</span>
+                <span className="font-mono font-semibold text-[#2097A9] text-sm">{c.codigo}</span>
                 {esUrgente && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">Urgente</span>}
               </div>
               <p className="font-medium text-slate-900 mt-1">{c.nombre}</p>
@@ -1564,7 +1564,7 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
             <p className="text-sm text-slate-500 mb-2">{e.rubro}</p>
             <span className="inline-block px-2 py-1 rounded bg-slate-100 font-mono text-slate-600 text-xs">{e.codigo}</span>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <div className="bg-primary-50 rounded-lg p-3 text-primary-700 text-sm font-medium">{e.cupones} cupones</div>
+              <div className="bg-[#e8f4f6] rounded-lg p-3 text-[#1a7a89] text-sm font-medium">{e.cupones} cupones</div>
               <div className="bg-green-50 rounded-lg p-3 text-green-700 text-sm font-medium">{e.comision}% comisión</div>
             </div>
             <p className="text-xs text-slate-400 mt-3 truncate">{e.contacto}</p>

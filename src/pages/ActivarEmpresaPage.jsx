@@ -123,19 +123,19 @@ export default function ActivarEmpresaPage() {
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-card p-6 sm:p-8">
         <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-2">Activar cuenta de empresa</h1>
         <p className="text-slate-500 text-sm mb-4">
-          Usá el correo con el que fue aprobada tu empresa. Si ya tenés cuenta, <Link to="/iniciar-sesion" className="font-medium text-primary-700 hover:text-primary-800">iniciá sesión</Link>.
-          {' '}<Link to="/restablecer-contrasena" className="font-medium text-primary-700 hover:text-primary-800">¿Olvidaste tu contraseña?</Link>
+          Usá el correo con el que fue aprobada tu empresa. Si ya tenés cuenta, <Link to="/iniciar-sesion" className="font-medium text-[#2097A9] hover:text-[#1a7a89]">iniciá sesión</Link>.
+          {' '}<Link to="/restablecer-contrasena" className="font-medium text-[#2097A9] hover:text-[#1a7a89]">¿Olvidaste tu contraseña?</Link>
         </p>
 
         {user && (
-          <div className="mb-6 p-4 rounded-xl bg-primary-50 border border-primary-200">
-            <p className="text-sm text-primary-900 font-medium mb-2">Estás logueado como {user.email}</p>
-            <p className="text-sm text-primary-700 mb-3">Si este es el correo de tu empresa aprobada, vinculá tu cuenta y entrá al panel de empresa sin crear otra cuenta.</p>
+          <div className="mb-6 p-4 rounded-xl bg-[#e8f4f6] border border-[#a3cfd8]">
+            <p className="text-sm text-[#0f4d57] font-medium mb-2">Estás logueado como {user.email}</p>
+            <p className="text-sm text-[#1a7a89] mb-3">Si este es el correo de tu empresa aprobada, vinculá tu cuenta y entrá al panel de empresa sin crear otra cuenta.</p>
             <button
               type="button"
               onClick={vincularCuentaActual}
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-lg bg-primary-700 text-white font-medium text-sm hover:bg-primary-800 disabled:opacity-50"
+              className="w-full py-2.5 px-4 rounded-lg bg-[#2097A9] text-white font-medium text-sm hover:bg-[#1a7a89] disabled:opacity-50"
             >
               {loading ? 'Vinculando...' : 'Vincular mi cuenta a la empresa'}
             </button>
@@ -161,7 +161,7 @@ export default function ActivarEmpresaPage() {
               onChange={handleChange}
               placeholder="empresa@ejemplo.com"
               required
-              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-primary-600 focus:outline-none text-slate-900"
+              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900"
             />
           </div>
           <div>
@@ -176,7 +176,7 @@ export default function ActivarEmpresaPage() {
               onChange={handleChange}
               placeholder="Mínimo 6 caracteres"
               required
-              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-primary-600 focus:outline-none text-slate-900"
+              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900"
             />
           </div>
           <div>
@@ -191,7 +191,7 @@ export default function ActivarEmpresaPage() {
               onChange={handleChange}
               placeholder="Repetí la contraseña"
               required
-              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-primary-600 focus:outline-none text-slate-900"
+              className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-white focus:border-[#2097A9] focus:outline-none text-slate-900"
             />
           </div>
           <button
