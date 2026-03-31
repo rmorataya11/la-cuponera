@@ -22,6 +22,31 @@ function NavLink({ to, children }) {
   );
 }
 
+function NavbarBrand({ empresaNombre, rol }) {
+  const label = rol === 'adminEmpresa' && empresaNombre ? empresaNombre : 'Cuponía';
+  return (
+    <Link
+      to="/"
+      className="inline-flex min-w-0 max-w-[min(100%,220px)] sm:max-w-none transition-opacity duration-150 hover:opacity-90"
+      title={empresaNombre || 'Cuponía'}
+      aria-label={label}
+    >
+      <span className="inline-flex items-center gap-0 min-w-0">
+        <img
+          src="/logo_cuponia.png"
+          alt=""
+          className="h-10 sm:h-11 w-auto shrink-0 object-contain object-left select-none"
+          draggable={false}
+          aria-hidden
+        />
+        <span className="-ml-1 text-xl font-semibold tracking-tight text-[#2097A9] truncate leading-none">
+          {label}
+        </span>
+      </span>
+    </Link>
+  );
+}
+
 export default function Layout() {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
@@ -86,20 +111,7 @@ export default function Layout() {
       {showHeroBackground && <HeroBackground />}
       <header className={`border-b border-slate-200/60 sticky top-0 z-20 ${showHeroBackground ? 'bg-white/80 backdrop-blur-md' : 'bg-white/90 backdrop-blur-sm'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 sm:gap-2.5 min-w-0 max-w-[min(100%,220px)] sm:max-w-none transition-opacity duration-150 hover:opacity-90"
-            title={empresaNombre || 'Cuponía'}
-          >
-            <img
-              src="/logo_cuponia.png"
-              alt="Cuponia"
-              className="h-8 sm:h-9 w-auto shrink-0 object-contain"
-            />
-            <span className="text-lg font-semibold tracking-tight text-[#2097A9] truncate">
-              {rol === 'adminEmpresa' && empresaNombre ? empresaNombre : 'Cuponía'}
-            </span>
-          </Link>
+          <NavbarBrand empresaNombre={empresaNombre} rol={rol} />
           <nav className="flex items-center gap-0.5">
             <NavLink to="/">Inicio</NavLink>
             {(!loading && (!user || rol === 'cliente')) && (

@@ -203,10 +203,20 @@ export default function CuponiaAdminDashboard() {
         className="flex flex-col bg-white border-r border-slate-200 shrink-0 transition-[width] duration-300 ease-in-out overflow-hidden"
         style={{ width: sidebarCollapsed ? 64 : 224 }}
       >
-        <div className="flex items-center h-16 px-4 border-b border-slate-100 shrink-0 min-w-0">
+        <div
+          className={`flex items-center h-16 px-2 sm:px-3 border-b border-slate-100 shrink-0 min-w-0 ${
+            sidebarCollapsed ? 'justify-center' : 'gap-1'
+          }`}
+        >
+          <img
+            src="/logo_cuponia.png"
+            alt=""
+            className={`w-auto shrink-0 object-contain object-left ${sidebarCollapsed ? 'h-7' : 'h-8'}`}
+            aria-hidden
+          />
           {!sidebarCollapsed && (
-            <div>
-              <p className="font-bold text-slate-900 truncate text-sm">Cuponia</p>
+            <div className="min-w-0 -ml-0.5">
+              <p className="font-bold text-[#2097A9] truncate text-sm">Cuponía</p>
               <p className="text-xs text-slate-500 truncate">Panel de Administración</p>
             </div>
           )}
