@@ -31,7 +31,10 @@ export default function Layout() {
   const [empresaNombre, setEmpresaNombre] = useState(null);
 
   const isFullWidthRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/panel-empresa') || location.pathname.startsWith('/canjear');
-  const isHome = location.pathname === '/';
+  const showHeroBackground =
+    location.pathname === '/' ||
+    location.pathname.startsWith('/registro') ||
+    location.pathname.startsWith('/ofertas');
 
   useEffect(() => {
     if (!user) {
@@ -79,9 +82,9 @@ export default function Layout() {
   const userDisplay = user && !loading && user.email;
 
   return (
-    <div className={`min-h-screen flex flex-col relative ${isHome ? '' : 'bg-slate-50/80'}`}>
-      {isHome && <HeroBackground />}
-      <header className={`border-b border-slate-200/60 sticky top-0 z-20 ${isHome ? 'bg-white/80 backdrop-blur-md' : 'bg-white/90 backdrop-blur-sm'}`}>
+    <div className={`min-h-screen flex flex-col relative ${showHeroBackground ? '' : 'bg-slate-50/80'}`}>
+      {showHeroBackground && <HeroBackground />}
+      <header className={`border-b border-slate-200/60 sticky top-0 z-20 ${showHeroBackground ? 'bg-white/80 backdrop-blur-md' : 'bg-white/90 backdrop-blur-sm'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
           <Link
             to="/"
