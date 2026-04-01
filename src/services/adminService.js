@@ -188,6 +188,12 @@ export async function getEmpleadosPorEmpresa(empresaId) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+/** Todos los empleados (panel admin global). */
+export async function getEmpleadosTodos() {
+  const snap = await getDocs(collection(db, 'empleados'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
 export async function addEmpleado(data) {
   const empresaId = (data.empresaId && String(data.empresaId).trim()) || null;
   if (!empresaId) throw new Error('empresaId es requerido para agregar un empleado.');

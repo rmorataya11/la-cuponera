@@ -13,6 +13,7 @@ import {
   deleteEmpresa,
   getClientesTodos,
   getCuponesTodos,
+  getEmpleadosTodos,
   asignarEmpresaIdACuponesSinEmpresa,
 } from '../services/adminService';
 import {
@@ -44,6 +45,7 @@ const NAV_ITEMS = [
   { id: 'empresas', label: 'Empresas', Icon: IconNavBuilding },
   { id: 'ofertas', label: 'Ofertas', Icon: IconNavTicket, badgeKey: 'ofertasPendientes' },
   { id: 'clientes', label: 'Clientes', Icon: IconNavUsers },
+  { id: 'empleados', label: 'Empleados', Icon: IconPackage },
   { id: 'cupones', label: 'Cupones', Icon: IconNavCoupon },
 ];
 
@@ -53,6 +55,7 @@ const SECTION_TITLES = {
   empresas: { title: 'Empresas', subtitle: 'Empresas ofertantes' },
   ofertas: { title: 'Ofertas', subtitle: 'Gestión de promociones' },
   clientes: { title: 'Clientes', subtitle: 'Usuarios registrados' },
+  empleados: { title: 'Empleados', subtitle: 'Personal autorizado para canjear cupones' },
   cupones: { title: 'Cupones', subtitle: 'Cupones vendidos y canjeados' },
 };
 
@@ -69,6 +72,21 @@ const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'O
 
 function getFechaCupon(c) {
   return (c.fechaCompra || c.fecha || '').toString().slice(0, 10);
+}
+
+/** Fecha legible desde Firestore Timestamp, string ISO o campo ausente. */
+function formatFechaRegistroCliente(c) {
+  const v = c.fechaRegistro ?? c.createdAt;
+  if (v == null || v === '') return '—';
+  if (typeof v === 'string') return v.length >= 10 ? v.slice(0, 10) : v;
+  if (typeof v.toDate === 'function') {
+    try {
+      return v.toDate().toLocaleDateString('es-SV', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return '—';
+    }
+  }
+  return '—';
 }
 
 /** Actividad de la semana actual (lunes a domingo). */
@@ -170,6 +188,7 @@ export default function CuponiaAdminDashboard() {
   const [empresas, setEmpresas] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [cupones, setCupones] = useState([]);
+  const [empleados, setEmpleados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -183,13 +202,15 @@ export default function CuponiaAdminDashboard() {
       getEmpresas(),
       getClientesTodos(),
       getCuponesTodos(),
+      getEmpleadosTodos(),
     ])
-      .then(([ofertasRaw, rubrosRaw, empresasRaw, clientesRaw, cuponesRaw]) => {
+      .then(([ofertasRaw, rubrosRaw, empresasRaw, clientesRaw, cuponesRaw, empleadosRaw]) => {
         if (cancelled) return;
         setEmpresas(empresasRaw);
         setRubros(rubrosRaw);
         setClientes(clientesRaw);
         setCupones(cuponesRaw);
+        setEmpleados(empleadosRaw);
         setOfertas(mapOfertasParaUI(ofertasRaw, empresasRaw, rubrosRaw));
       })
       .catch((err) => {
@@ -318,6 +339,9 @@ export default function CuponiaAdminDashboard() {
               )}
               {activeTab === 'clientes' && (
                 <ClientesSection clientes={clientes} cupones={cupones} ofertas={ofertas} />
+              )}
+              {activeTab === 'empleados' && (
+                <EmpleadosSection empleados={empleados} empresas={empresas} />
               )}
               {activeTab === 'cupones' && (
                 <CuponesSection
@@ -1622,6 +1646,16 @@ function EmpresasSection({ empresas = [], rubros = [], onRefetch }) {
 }
 
 // --- Sección Clientes ---
+function badgeEstadoCliente(c) {
+  if (c.activo === false) {
+    return { label: 'Inactivo', className: 'bg-slate-100 text-slate-600' };
+  }
+  if ((c.cupones ?? 0) > 0) {
+    return { label: 'Con compras', className: 'bg-green-100 text-green-800' };
+  }
+  return { label: 'Sin compras', className: 'bg-amber-50 text-amber-800' };
+}
+
 function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
   const [busqueda, setBusqueda] = useState('');
   const [orden, setOrden] = useState('nombre');
@@ -1635,15 +1669,18 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
     }, 0);
     return {
       ...c,
-      email: c.correo ?? c.email,
+      email: c.correo ?? c.email ?? '',
       cupones: cuponesCliente.length,
       gasto,
-      registro: '',
-      activo: true,
     };
   });
   const filtrados = conCupones.filter(
-    (c) => !busqueda || (c.nombre && c.nombre.toLowerCase().includes(busqueda.toLowerCase())) || (c.email && c.email.toLowerCase().includes(busqueda.toLowerCase())) || (c.correo && c.correo.toLowerCase().includes(busqueda.toLowerCase()))
+    (c) =>
+      !busqueda ||
+      (c.nombre && c.nombre.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (c.email && c.email.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (c.correo && c.correo.toLowerCase().includes(busqueda.toLowerCase())) ||
+      (c.telefono && String(c.telefono).toLowerCase().includes(busqueda.toLowerCase()))
   );
   const ordenados = [...filtrados].sort((a, b) => {
     if (orden === 'nombre') return (a.nombre || '').localeCompare(b.nombre || '');
@@ -1651,18 +1688,19 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
     if (orden === 'gasto') return (b.gasto ?? 0) - (a.gasto ?? 0);
     return 0;
   });
+  const conComprasCount = conCupones.filter((c) => (c.cupones ?? 0) > 0).length;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4">
         <input
           type="text"
-          placeholder="Buscar por nombre o email..."
+          placeholder="Buscar por nombre, email o teléfono..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           className="flex-1 max-w-md px-4 py-2 border border-slate-200 rounded-lg bg-white"
         />
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {['nombre', 'cupones', 'gasto'].map((o) => (
             <button
               key={o}
@@ -1676,22 +1714,27 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <p className="text-slate-500 text-xs uppercase tracking-wider">Total</p>
           <p className="text-xl font-bold text-slate-900">{clientes.length}</p>
         </div>
         <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-          <p className="text-slate-500 text-xs uppercase tracking-wider">Activos</p>
-          <p className="text-xl font-bold text-slate-900">{conCupones.filter((c) => c.activo).length}</p>
+          <p className="text-slate-500 text-xs uppercase tracking-wider">Con compras</p>
+          <p className="text-xl font-bold text-slate-900">{conComprasCount}</p>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <p className="text-slate-500 text-xs uppercase tracking-wider">Sin compras</p>
+          <p className="text-xl font-bold text-slate-900">{clientes.length - conComprasCount}</p>
         </div>
       </div>
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden overflow-x-auto">
+        <table className="w-full min-w-[720px]">
           <thead>
             <tr className="bg-slate-100 border-b border-slate-100">
               <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Cliente</th>
               <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Email</th>
+              <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Teléfono</th>
               <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Cupones</th>
               <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Gasto</th>
               <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Registro</th>
@@ -1699,27 +1742,35 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
             </tr>
           </thead>
           <tbody>
-            {ordenados.map((c) => (
-              <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50">
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium shrink-0" style={{ backgroundColor: PRIMARY }}>
-                      {c.nombre.charAt(0)}
+            {ordenados.map((c) => {
+              const badge = badgeEstadoCliente(c);
+              const inicial = (c.nombre || c.email || '?').trim().charAt(0).toUpperCase();
+              return (
+                <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium shrink-0"
+                        style={{ backgroundColor: PRIMARY }}
+                      >
+                        {inicial}
+                      </div>
+                      <span className="font-medium text-slate-900">{c.nombre || c.email || c.id}</span>
                     </div>
-                    <span className="font-medium text-slate-900">{c.nombre}</span>
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-slate-500 text-sm">{c.email}</td>
-                <td className="py-3 px-4 text-slate-600">{c.cupones}</td>
-                <td className="py-3 px-4 text-slate-600">${c.gasto.toFixed(2)}</td>
-                <td className="py-3 px-4 text-slate-500 text-sm">{c.registro}</td>
-                <td className="py-3 px-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.activo ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
-                    {c.activo ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="py-3 px-4 text-slate-500 text-sm">{c.email || '—'}</td>
+                  <td className="py-3 px-4 text-slate-500 text-sm">{c.telefono != null && c.telefono !== '' ? c.telefono : '—'}</td>
+                  <td className="py-3 px-4 text-slate-600">{c.cupones}</td>
+                  <td className="py-3 px-4 text-slate-600">${c.gasto.toFixed(2)}</td>
+                  <td className="py-3 px-4 text-slate-500 text-sm whitespace-nowrap">{formatFechaRegistroCliente(c)}</td>
+                  <td className="py-3 px-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.className}`}>
+                      {badge.label}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -1727,11 +1778,94 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
   );
 }
 
-function SectionPlaceholder({ title }) {
+// --- Sección Empleados (solo lectura; alta/edición sigue en panel empresa) ---
+function EmpleadosSection({ empleados = [], empresas = [] }) {
+  const [busqueda, setBusqueda] = useState('');
+  const empresaNombre = (empresaId) => {
+    if (!empresaId) return '—';
+    const e = empresas.find((x) => x.id === empresaId);
+    return e?.nombre ?? empresaId;
+  };
+  const filas = empleados.map((e) => {
+    const nombre = [e.nombres, e.apellidos].filter(Boolean).join(' ').trim() || '—';
+    const tieneCuenta = e.uid != null && e.uid !== '';
+    return { ...e, nombre, tieneCuenta };
+  });
+  const q = busqueda.trim().toLowerCase();
+  const filtrados = filas.filter(
+    (row) =>
+      !q ||
+      row.nombre.toLowerCase().includes(q) ||
+      (row.correo && row.correo.toLowerCase().includes(q)) ||
+      empresaNombre(row.empresaId).toLowerCase().includes(q)
+  );
+  const ordenados = [...filtrados].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-      <h2 className="font-bold text-slate-900 text-lg mb-2">{title}</h2>
-      <p className="text-slate-500">Contenido en el siguiente paso.</p>
+    <div className="space-y-6">
+      <p className="text-sm text-slate-600 max-w-2xl">
+        Listado de empleados registrados por las empresas. Para dar de alta o editar, usá el{' '}
+        <span className="font-medium text-slate-800">panel empresa</span> con una cuenta de administrador de empresa.
+      </p>
+      <input
+        type="text"
+        placeholder="Buscar por nombre, correo o empresa..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+        className="w-full max-w-md px-4 py-2 border border-slate-200 rounded-lg bg-white"
+      />
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <p className="text-slate-500 text-xs uppercase tracking-wider">Total</p>
+          <p className="text-xl font-bold text-slate-900">{empleados.length}</p>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <p className="text-slate-500 text-xs uppercase tracking-wider">Con cuenta</p>
+          <p className="text-xl font-bold text-slate-900">{filas.filter((r) => r.tieneCuenta).length}</p>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <p className="text-slate-500 text-xs uppercase tracking-wider">Sin vincular</p>
+          <p className="text-xl font-bold text-slate-900">{filas.filter((r) => !r.tieneCuenta).length}</p>
+        </div>
+      </div>
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden overflow-x-auto">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="bg-slate-100 border-b border-slate-100">
+              <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Nombre</th>
+              <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Correo</th>
+              <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Empresa</th>
+              <th className="text-left py-3 px-4 text-xs font-semibold tracking-wider text-slate-500 uppercase">Cuenta</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ordenados.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="py-10 px-4 text-center text-slate-500 text-sm">
+                  No hay empleados registrados o no coinciden con la búsqueda.
+                </td>
+              </tr>
+            ) : (
+              ordenados.map((row) => (
+                <tr key={row.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="py-3 px-4 font-medium text-slate-900">{row.nombre}</td>
+                  <td className="py-3 px-4 text-slate-600 text-sm">{row.correo || '—'}</td>
+                  <td className="py-3 px-4 text-slate-600 text-sm">{empresaNombre(row.empresaId)}</td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        row.tieneCuenta ? 'bg-green-100 text-green-800' : 'bg-amber-50 text-amber-800'
+                      }`}
+                    >
+                      {row.tieneCuenta ? 'Vinculada' : 'Pendiente'}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

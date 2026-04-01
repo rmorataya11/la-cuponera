@@ -8,7 +8,7 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 const AuthContext = createContext(null);
@@ -43,6 +43,7 @@ export function AuthProvider({ children }) {
       correo: profile.correo,
       direccion: profile.direccion,
       dui: profile.dui,
+      fechaRegistro: serverTimestamp(),
     });
     return userCredential;
   }
