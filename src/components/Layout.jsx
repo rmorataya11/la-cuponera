@@ -125,7 +125,8 @@ export default function Layout() {
   const showHeroBackground =
     location.pathname === '/' ||
     location.pathname.startsWith('/registro') ||
-    location.pathname.startsWith('/ofertas');
+    location.pathname.startsWith('/ofertas') ||
+    location.pathname.startsWith('/iniciar-sesion');
 
   useEffect(() => {
     if (!user) {
