@@ -8,6 +8,9 @@ const ERROR_MESSAGES = {
   'auth/invalid-email': 'El correo no es válido.',
   'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
   'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde.',
+  'auth/operation-not-allowed': 'El inicio con correo y contraseña no está habilitado en Firebase (Authentication → Sign-in method).',
+  'auth/network-request-failed': 'Sin conexión o Firebase no respondió. Revisá tu red o probá más tarde.',
+  'auth/invalid-api-key': 'La API key de Firebase no es válida o está restringida. Revisá variables en Netlify y restricciones en Google Cloud Console.',
 };
 
 export default function LoginPage() {
@@ -34,20 +37,23 @@ export default function LoginPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.correo.trim() || !form.password) {
+    const correo = form.correo.trim().toLowerCase();
+    if (!correo || !form.password) {
       setError('Ingresa tu correo y contraseña.');
       return;
     }
     setError('');
     setLoading(true);
     try {
-      const cred = await login(form.correo.trim(), form.password);
+      const cred = await login(correo, form.password);
       const uid = cred?.user?.uid;
-      const email = cred?.user?.email ?? form.correo?.trim();
+      const email = cred?.user?.email ?? correo;
       const rol = uid ? await getRolUsuario(uid, email) : 'cliente';
       const to = rol === 'admin' ? '/admin' : rol === 'adminEmpresa' ? '/panel-empresa' : rol === 'empleado' ? '/canjear' : from;
       navigate(to, { replace: true });
     } catch (err) {
+      // En producción ayuda a distinguir invalid-credential vs API key / red (F12 → Consola).
+      console.warn('[Cuponía login]', err?.code, err?.message);
       const message = ERROR_MESSAGES[err.code] || err.message || 'Error al iniciar sesión.';
       setError(message);
     } finally {
