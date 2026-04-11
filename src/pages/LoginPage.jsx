@@ -4,7 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { getRolUsuario } from '../services/rolesService';
 
 const ERROR_MESSAGES = {
-  'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+  'auth/invalid-credential':
+    'Correo o contraseña incorrectos, o la cuenta no existe en Firebase Authentication. El login no lee Firestore: la contraseña solo está en Authentication → Usuarios. En Firestore, admins/{UID} solo marca el rol; el ID del documento debe ser el UID de ese usuario (no el correo).',
+  'auth/wrong-password':
+    'Contraseña incorrecta. Si creaste solo un documento en Firestore, creá también el usuario en Authentication con el mismo correo.',
+  'auth/user-not-found':
+    'No hay usuario con ese correo en Firebase Authentication. Creá el usuario en Authentication (o registrate); Firestore no almacena la contraseña de acceso.',
   'auth/invalid-email': 'El correo no es válido.',
   'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
   'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde.',

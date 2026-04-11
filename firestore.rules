@@ -13,13 +13,20 @@ service cloud.firestore {
         ? get(/databases/$(database)/documents/empresas/$(empresaId)).data
         : null;
     }
-    // True si el usuario autenticado es el admin de la empresa (por UID o por correo).
+    // True si el usuario autenticado es el admin de la empresa (por UID o por correo del doc = email del token).
+    // adminUid: acceso directo y get() por si el doc se editó desde la consola.
     function isAdminOfEmpresa(empresaId) {
+      let d = empresaData(empresaId);
       return request.auth != null && empresaId != null
-        && empresaData(empresaId) != null
+        && d != null
         && (
-          empresaData(empresaId).get('adminUid', '') == request.auth.uid
-          || empresaData(empresaId).get('correo', '') == request.auth.token.email
+          d.adminUid == request.auth.uid
+          || d.get('adminUid', '') == request.auth.uid
+          || (
+            request.auth.token.email != null
+            && d.get('correo', '') != ''
+            && d.get('correo', '') == request.auth.token.email
+          )
         );
     }
 
@@ -31,6 +38,16 @@ service cloud.firestore {
           isAdminOfEmpresa(empresaIdEnOferta)
           || (empresaIdEnOferta == 'empresa1' && isAdminOfEmpresa('empresal'))
           || (empresaIdEnOferta == 'empresal' && isAdminOfEmpresa('empresa1'))
+        );
+    }
+
+    // Misma lógica para empleados: el cliente usa empresa1 si el doc de empresa es empresal (PanelEmpresaPage).
+    function isAdminOfEmpresaParaEmpleado(empresaIdEnEmpleado) {
+      return request.auth != null && empresaIdEnEmpleado != null && empresaIdEnEmpleado != ''
+        && (
+          isAdminOfEmpresa(empresaIdEnEmpleado)
+          || (empresaIdEnEmpleado == 'empresa1' && isAdminOfEmpresa('empresal'))
+          || (empresaIdEnEmpleado == 'empresal' && isAdminOfEmpresa('empresa1'))
         );
     }
 
@@ -106,7 +123,7 @@ service cloud.firestore {
     // Empleados: admin global; admin de la empresa del doc; el propio empleado por uid o por correo (consultas y primer login).
     function empleadoPuedeLeer() {
       return isAdmin()
-        || (resource.data.get('empresaId') != null && isAdminOfEmpresa(resource.data.empresaId))
+        || (resource.data.get('empresaId') != null && isAdminOfEmpresaParaEmpleado(resource.data.empresaId))
         || (request.auth != null && resource.data.get('uid') == request.auth.uid)
         || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
     }
@@ -143,7 +160,7 @@ service cloud.firestore {
     function empleadoUpdatePorAdminEmpresa() {
       return request.auth != null
         && resource.data.get('empresaId') != null
-        && isAdminOfEmpresa(resource.data.empresaId)
+        && isAdminOfEmpresaParaEmpleado(resource.data.empresaId)
         && request.resource.data.empresaId == resource.data.empresaId
         && request.resource.data.uid == resource.data.uid
         && request.resource.data.get('empresaAdminUid', null) == resource.data.get('empresaAdminUid', null)
@@ -172,7 +189,7 @@ service cloud.firestore {
         || (
           request.auth != null
           && request.resource.data.get('empresaId') != null
-          && isAdminOfEmpresa(request.resource.data.empresaId)
+          && isAdminOfEmpresaParaEmpleado(request.resource.data.empresaId)
           && empleadoCreateKeysValid()
           && (!request.resource.data.keys().hasAny(['empresaAdminUid'])
             || (request.resource.data.empresaAdminUid is string
@@ -185,7 +202,7 @@ service cloud.firestore {
         || empleadoUpdateSoloVincularUid()
         || empleadoUpdatePorAdminEmpresa();
       allow delete: if isAdmin()
-        || (request.auth != null && resource.data.get('empresaId') != null && isAdminOfEmpresa(resource.data.empresaId));
+        || (request.auth != null && resource.data.get('empresaId') != null && isAdminOfEmpresaParaEmpleado(resource.data.empresaId));
     }
 
     // empleadoByUid: el empleado escribe su propio doc { empresaId } para que las reglas de cupones puedan validar.

@@ -1,6 +1,6 @@
 import { collection, query, where, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
-import { isAdmin, setEmpleadoUid } from './adminService';
+import { isAdmin, setEmpleadoUid, getEmpresaByAdminUid } from './adminService';
 import { setEmpleadoByUid } from './canjeService';
 
 /**
@@ -12,14 +12,8 @@ export async function getRolUsuario(uid, email) {
   if (!uid) return 'cliente';
   try {
     if (await isAdmin(uid)) return 'admin';
-    const empresasSnap = await getDocs(
-      query(
-        collection(db, 'empresas'),
-        where('adminUid', '==', uid),
-        limit(1)
-      )
-    );
-    if (!empresasSnap.empty) return 'adminEmpresa';
+    const empresaComoAdmin = await getEmpresaByAdminUid(uid, email);
+    if (empresaComoAdmin) return 'adminEmpresa';
     let empleadosSnap = await getDocs(
       query(
         collection(db, 'empleados'),

@@ -14,7 +14,7 @@ export default function EmpleadoRoute({ children }) {
       return;
     }
     let cancelled = false;
-    getRolUsuario(user.uid).then((rol) => {
+    getRolUsuario(user.uid, user.email).then((rol) => {
       if (!cancelled) setCheck({ loading: false, allowed: rol === 'empleado' });
     });
     return () => { cancelled = true; };

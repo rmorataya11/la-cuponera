@@ -136,7 +136,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
       setLoading(true);
       setError('');
       try {
-        const emp = await getEmpresaByAdminUid(user.uid);
+        const emp = await getEmpresaByAdminUid(user.uid, user.email);
         if (cancelled) return;
         setEmpresa(emp);
         if (!emp) {
@@ -177,7 +177,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
   }
   load();
   return () => { cancelled = true; };
-}, [user?.uid]);
+}, [user?.uid, user?.email]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;

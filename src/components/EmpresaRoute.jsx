@@ -14,7 +14,7 @@ export default function EmpresaRoute({ children }) {
       return;
     }
     let cancelled = false;
-    getRolUsuario(user.uid).then((rol) => {
+    getRolUsuario(user.uid, user.email).then((rol) => {
       if (!cancelled) setCheck({ loading: false, allowed: rol === 'adminEmpresa' });
     });
     return () => { cancelled = true; };

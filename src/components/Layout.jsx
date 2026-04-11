@@ -136,7 +136,7 @@ export default function Layout() {
       return;
     }
     let cancelled = false;
-    getRolUsuario(user.uid).then((r) => {
+    getRolUsuario(user.uid, user.email).then((r) => {
       if (!cancelled) setRol(r);
     });
     return () => { cancelled = true; };
@@ -160,7 +160,7 @@ export default function Layout() {
       return;
     }
     let cancelled = false;
-    getEmpresaByAdminUid(user.uid).then((emp) => {
+    getEmpresaByAdminUid(user.uid, user.email).then((emp) => {
       if (!cancelled) setEmpresaNombre(emp?.nombre ?? null);
     });
     return () => { cancelled = true; };

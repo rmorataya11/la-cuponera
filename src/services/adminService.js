@@ -136,8 +136,11 @@ export async function getEmpresas() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
-/** Empresa cuyo admin es el usuario (adminUid === uid). Devuelve null si no hay. */
-export async function getEmpresaByAdminUid(uid) {
+/**
+ * Empresa cuyo usuario es admin de empresa (adminUid === uid).
+ * Si email está definido y la primera consulta no devuelve nada, busca por correo (mismo criterio que las reglas: correo del doc = email del usuario).
+ */
+export async function getEmpresaByAdminUid(uid, email) {
   if (!uid) return null;
   const snap = await getDocs(
     query(
@@ -146,9 +149,26 @@ export async function getEmpresaByAdminUid(uid) {
       limit(1)
     )
   );
-  if (snap.empty) return null;
-  const d = snap.docs[0];
-  return { id: d.id, ...d.data() };
+  if (!snap.empty) {
+    const d = snap.docs[0];
+    return { id: d.id, ...d.data() };
+  }
+  const e = email && String(email).trim();
+  if (!e) return null;
+  const correoNorm = e.toLowerCase();
+  const snapCorreo = await getDocs(
+    query(
+      collection(db, 'empresas'),
+      where('correo', '==', correoNorm),
+      limit(25)
+    )
+  );
+  const found = snapCorreo.docs.find((doc) => {
+    const data = doc.data();
+    return data.adminUid === uid || String(data.adminUid ?? '') === String(uid);
+  });
+  if (found) return { id: found.id, ...found.data() };
+  return null;
 }
 
 export async function addEmpresa(data) {
