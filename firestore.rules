@@ -44,16 +44,6 @@ service cloud.firestore {
         );
     }
 
-    // Misma lógica para empleados: el cliente usa empresa1 si el doc de empresa es empresal (PanelEmpresaPage).
-    function isAdminOfEmpresaParaEmpleado(empresaIdEnEmpleado) {
-      return request.auth != null && empresaIdEnEmpleado != null && empresaIdEnEmpleado != ''
-        && (
-          isAdminOfEmpresa(empresaIdEnEmpleado)
-          || (empresaIdEnEmpleado == 'empresa1' && isAdminOfEmpresa('empresal'))
-          || (empresaIdEnEmpleado == 'empresal' && isAdminOfEmpresa('empresa1'))
-        );
-    }
-
     // Oferta aprobada (comparación tolerante a mayúsculas).
     function ofertaEstaAprobada() {
       let e = resource.data.get('estado', '');
@@ -123,98 +113,10 @@ service cloud.firestore {
       allow read, write: if (request.auth != null && request.auth.uid == userId) || isAdmin();
     }
 
-    // Empleados: admin global; admin de la empresa del doc; el propio empleado por uid o por correo (consultas y primer login).
-    function empleadoPuedeLeer() {
-      return isAdmin()
-        || (resource.data.get('empresaId') != null && isAdminOfEmpresaParaEmpleado(resource.data.empresaId))
-        || (request.auth != null && resource.data.get('uid') == request.auth.uid)
-        || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
-    }
-
-    // Listados (queries): sin get() sobre empresas — Firestore no garantiza list + get en otra colección.
-    // Copiamos el UID del admin de empresa en cada doc (empresaAdminUid) y consultamos por empresaId + empresaAdminUid.
-    function empleadoPuedeLeerList() {
-      return isAdmin()
-        || (request.auth != null && resource.data.empresaAdminUid == request.auth.uid)
-        || (request.auth != null && resource.data.get('uid') == request.auth.uid)
-        || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
-    }
-
-    function empleadoUidVacio() {
-      return !resource.data.keys().hasAny(['uid'])
-        || resource.data.uid == null
-        || resource.data.uid == '';
-    }
-
-    // Vincular uid en primer login (rolesService / registro empleado).
-    function empleadoUpdateSoloVincularUid() {
-      return request.auth != null
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['uid'])
-        && empleadoUidVacio()
-        && request.resource.data.uid == request.auth.uid
-        && resource.data.get('correo', '') == request.auth.token.email
-        && request.resource.data.empresaId == resource.data.empresaId
-        && request.resource.data.nombres == resource.data.nombres
-        && request.resource.data.apellidos == resource.data.apellidos
-        && request.resource.data.correo == resource.data.correo;
-    }
-
-    // Admin de empresa edita datos (no cambia empresaId ni uid). Puede fijar empresaAdminUid la primera vez (docs viejos).
-    function empleadoEmpresaAdminUidOkEnUpdate() {
-      let old = resource.data.get('empresaAdminUid', null);
-      let neu = request.resource.data.get('empresaAdminUid', null);
-      return old == neu
-        || (old == null && neu == request.auth.uid);
-    }
-
-    function empleadoUpdatePorAdminEmpresa() {
-      return request.auth != null
-        && resource.data.get('empresaId') != null
-        && isAdminOfEmpresaParaEmpleado(resource.data.empresaId)
-        && request.resource.data.empresaId == resource.data.empresaId
-        && request.resource.data.uid == resource.data.uid
-        && empleadoEmpresaAdminUidOkEnUpdate()
-        && request.resource.data.nombres is string
-        && request.resource.data.apellidos is string
-        && request.resource.data.correo is string;
-    }
-
-    // Solo combinaciones permitidas (el cliente no debe mandar uid: null ni campos extra).
-    function empleadoCreateKeysValid() {
-      let k = request.resource.data.keys();
-      return k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo'])
-        || k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'empresaAdminUid'])
-        || (
-          k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid'])
-          && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
-        )
-        || (
-          k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid', 'empresaAdminUid'])
-          && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
-        );
-    }
-
+    // Empleados: acceso amplio (lectura y escritura para cualquiera con la API key del proyecto).
+    // La app solo ofrece alta/edición/listado desde el panel empresa; las reglas no restringen quién llama a Firestore.
     match /empleados/{empleadoId} {
-      allow get: if request.auth != null && empleadoPuedeLeer();
-      allow list: if request.auth != null && empleadoPuedeLeerList();
-      allow create: if isAdmin()
-        || (
-          request.auth != null
-          && request.resource.data.empresaId is string
-          && request.resource.data.get('empresaId') != ''
-          && isAdminOfEmpresaParaEmpleado(request.resource.data.empresaId)
-          && empleadoCreateKeysValid()
-          && (!request.resource.data.keys().hasAny(['empresaAdminUid'])
-            || request.resource.data.empresaAdminUid == request.auth.uid)
-          && request.resource.data.nombres is string
-          && request.resource.data.apellidos is string
-          && request.resource.data.correo is string
-        );
-      allow update: if isAdmin()
-        || empleadoUpdateSoloVincularUid()
-        || empleadoUpdatePorAdminEmpresa();
-      allow delete: if isAdmin()
-        || (request.auth != null && resource.data.get('empresaId') != null && isAdminOfEmpresaParaEmpleado(resource.data.empresaId));
+      allow read, write: if true;
     }
 
     // empleadoByUid: el empleado escribe su propio doc { empresaId } para que las reglas de cupones puedan validar.
