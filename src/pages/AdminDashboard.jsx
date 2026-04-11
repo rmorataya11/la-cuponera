@@ -15,6 +15,7 @@ import {
   getCuponesTodos,
   getEmpleadosTodos,
   asignarEmpresaIdACuponesSinEmpresa,
+  backfillEmpresaAdminUidEnEmpleados,
 } from '../services/adminService';
 import {
   IconNavDashboard,
@@ -341,7 +342,11 @@ export default function CuponiaAdminDashboard() {
                 <ClientesSection clientes={clientes} cupones={cupones} ofertas={ofertas} />
               )}
               {activeTab === 'empleados' && (
-                <EmpleadosSection empleados={empleados} empresas={empresas} />
+                <EmpleadosSection
+                  empleados={empleados}
+                  empresas={empresas}
+                  refreshEmpleados={() => getEmpleadosTodos().then(setEmpleados)}
+                />
               )}
               {activeTab === 'cupones' && (
                 <CuponesSection
@@ -1779,8 +1784,10 @@ function ClientesSection({ clientes = [], cupones = [], ofertas = [] }) {
 }
 
 // --- Sección Empleados (solo lectura; alta/edición sigue en panel empresa) ---
-function EmpleadosSection({ empleados = [], empresas = [] }) {
+function EmpleadosSection({ empleados = [], empresas = [], refreshEmpleados }) {
   const [busqueda, setBusqueda] = useState('');
+  const [syncMsg, setSyncMsg] = useState('');
+  const [syncing, setSyncing] = useState(false);
   const empresaNombre = (empresaId) => {
     if (!empresaId) return '—';
     const e = empresas.find((x) => x.id === empresaId);
@@ -1801,12 +1808,41 @@ function EmpleadosSection({ empleados = [], empresas = [] }) {
   );
   const ordenados = [...filtrados].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
 
+  const handleSyncEmpresaAdminUid = async () => {
+    setSyncing(true);
+    setSyncMsg('');
+    try {
+      const n = await backfillEmpresaAdminUidEnEmpleados();
+      await refreshEmpleados?.();
+      setSyncMsg(
+        n > 0
+          ? `Se actualizaron ${n} empleado(s) con el campo empresaAdminUid. El panel empresa ya puede listarlos.`
+          : 'No había empleados sin empresaAdminUid (o la empresa no tiene adminUid).'
+      );
+    } catch (err) {
+      setSyncMsg(err?.message || 'No se pudo sincronizar.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-slate-600 max-w-2xl">
         Listado de empleados registrados por las empresas. Para dar de alta o editar, usá el{' '}
         <span className="font-medium text-slate-800">panel empresa</span> con una cuenta de administrador de empresa.
       </p>
+      <div className="flex flex-wrap items-start gap-3">
+        <button
+          type="button"
+          onClick={handleSyncEmpresaAdminUid}
+          disabled={syncing}
+          className="px-4 py-2 rounded-lg bg-[#2097A9] text-white text-sm font-medium hover:opacity-95 disabled:opacity-50"
+        >
+          {syncing ? 'Sincronizando…' : 'Sincronizar empresaAdminUid en empleados'}
+        </button>
+        {syncMsg && <p className="text-sm text-slate-600 max-w-xl">{syncMsg}</p>}
+      </div>
       <input
         type="text"
         placeholder="Buscar por nombre, correo o empresa..."

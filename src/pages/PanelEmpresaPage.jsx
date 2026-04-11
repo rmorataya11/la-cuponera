@@ -105,7 +105,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
       const [ofertasListas, rubrosRaw, empleadosResult] = await Promise.all([
         Promise.all(ofertasIds.map((id) => getOfertasPorEmpresa(id))),
         getRubros(),
-        getEmpleadosPorEmpresa(empleadosEmpresaId || empresa.id).then((data) => ({ ok: true, data })).catch((err) => ({ ok: false, err })),
+        getEmpleadosPorEmpresa(empleadosEmpresaId || empresa.id, user.uid).then((data) => ({ ok: true, data })).catch((err) => ({ ok: false, err })),
       ]);
       const seenO = new Set();
       const ofertasRaw = ofertasListas.flat().filter((o) => {
@@ -151,7 +151,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
         const [ofertasListas, rubrosRaw, empleadosResult] = await Promise.all([
           Promise.all(ofertasIds.map((id) => getOfertasPorEmpresa(id))),
           getRubros(),
-          getEmpleadosPorEmpresa(empleadosEmpresaId).then((data) => ({ ok: true, data })).catch((err) => ({ ok: false, err })),
+          getEmpleadosPorEmpresa(empleadosEmpresaId, user.uid).then((data) => ({ ok: true, data })).catch((err) => ({ ok: false, err })),
         ]);
         if (cancelled) return;
         const seenO = new Set();
@@ -268,7 +268,15 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
       setShowForm(false);
       await refetch();
     } catch (err) {
-      setError(err?.message || (editingOferta ? 'No se pudo actualizar.' : 'No se pudo crear la oferta.'));
+      const denied =
+        err?.code === 'permission-denied' || (err?.message && String(err.message).toLowerCase().includes('permission'));
+      if (denied) {
+        setError(
+          'No tenés permiso para guardar la oferta. Publicá en Firebase las reglas de Firestore del repositorio y comprobá que en la empresa tu UID esté en adminUid.'
+        );
+      } else {
+        setError(err?.message || (editingOferta ? 'No se pudo actualizar.' : 'No se pudo crear la oferta.'));
+      }
     } finally {
       setSaving(false);
     }
@@ -363,6 +371,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
           apellidos: formEmpleado.apellidos,
           correo: formEmpleado.correo,
           empresaId: empleadosEmpresaId || empresa.id,
+          empresaAdminUid: user.uid,
           uid: null,
         });
         const adminEmail = user.email;
@@ -398,7 +407,11 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
         setFormEmpleado({ nombres: '', apellidos: '', correo: '', crearCuenta: false, contraseña: '', tuContraseña: '' });
         await refetch();
       } else {
-        const newId = await addEmpleado({ ...formEmpleado, empresaId: empleadosEmpresaId || empresa.id });
+        const newId = await addEmpleado({
+          ...formEmpleado,
+          empresaId: empleadosEmpresaId || empresa.id,
+          empresaAdminUid: user.uid,
+        });
         setEmpleados((prev) => [...prev, {
           id: newId,
           empresaId: empleadosEmpresaId || empresa.id,

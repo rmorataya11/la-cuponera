@@ -180,8 +180,23 @@ export async function deleteEmpresa(empresaId) {
 
 // --- Empleados (admin o admin de empresa para su empresa) ---
 
-export async function getEmpleadosPorEmpresa(empresaId) {
+/**
+ * Empleados de una empresa (panel empresa).
+ * Si pasás viewerAdminUid (UID del admin de empresa), se usa consulta compuesta con empresaAdminUid
+ * para cumplir reglas de Firestore en listados (sin get() a /empresas en la regla de list).
+ */
+export async function getEmpleadosPorEmpresa(empresaId, viewerAdminUid) {
   if (!empresaId) return [];
+  if (viewerAdminUid) {
+    const snap = await getDocs(
+      query(
+        collection(db, 'empleados'),
+        where('empresaId', '==', empresaId),
+        where('empresaAdminUid', '==', viewerAdminUid)
+      )
+    );
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  }
   const snap = await getDocs(
     query(collection(db, 'empleados'), where('empresaId', '==', empresaId))
   );
@@ -197,14 +212,44 @@ export async function getEmpleadosTodos() {
 export async function addEmpleado(data) {
   const empresaId = (data.empresaId && String(data.empresaId).trim()) || null;
   if (!empresaId) throw new Error('empresaId es requerido para agregar un empleado.');
-  const ref = await addDoc(collection(db, 'empleados'), {
+  const payload = {
     empresaId,
     nombres: (data.nombres || '').trim(),
     apellidos: (data.apellidos || '').trim(),
     correo: (data.correo || '').trim().toLowerCase(),
     uid: data.uid || null,
-  });
+  };
+  if (data.empresaAdminUid) {
+    payload.empresaAdminUid = data.empresaAdminUid;
+  }
+  const ref = await addDoc(collection(db, 'empleados'), payload);
   return ref.id;
+}
+
+/**
+ * Rellena empresaAdminUid en empleados antiguos (copiado de empresas/{id}.adminUid).
+ * Solo puede ejecutarlo un admin global; llamar desde el panel admin.
+ */
+export async function backfillEmpresaAdminUidEnEmpleados() {
+  const [empleadosSnap, empresasSnap] = await Promise.all([
+    getDocs(collection(db, 'empleados')),
+    getDocs(collection(db, 'empresas')),
+  ]);
+  const empresaAdminById = Object.fromEntries(
+    empresasSnap.docs.map((d) => [d.id, d.data()?.adminUid || null])
+  );
+  let actualizados = 0;
+  for (const d of empleadosSnap.docs) {
+    const e = d.data();
+    if (e.empresaAdminUid) continue;
+    const empresaId = e.empresaId;
+    if (!empresaId) continue;
+    const adminUid = empresaAdminById[empresaId];
+    if (!adminUid) continue;
+    await updateDoc(doc(db, 'empleados', d.id), { empresaAdminUid: adminUid });
+    actualizados += 1;
+  }
+  return actualizados;
 }
 
 export async function updateEmpleado(id, data) {

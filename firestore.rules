@@ -23,6 +23,17 @@ service cloud.firestore {
         );
     }
 
+    // Panel empresa guarda ofertas con empresa1 cuando el doc de empresa es empresal (typo histórico).
+    // Debe coincidir con empleadosEmpresaId / getOfertasPorEmpresa en el cliente.
+    function isAdminOfEmpresaParaOferta(empresaIdEnOferta) {
+      return request.auth != null && empresaIdEnOferta != null && empresaIdEnOferta != ''
+        && (
+          isAdminOfEmpresa(empresaIdEnOferta)
+          || (empresaIdEnOferta == 'empresa1' && isAdminOfEmpresa('empresal'))
+          || (empresaIdEnOferta == 'empresal' && isAdminOfEmpresa('empresa1'))
+        );
+    }
+
     // Oferta aprobada (comparación tolerante a mayúsculas).
     function ofertaEstaAprobada() {
       let e = resource.data.get('estado', '');
@@ -78,9 +89,11 @@ service cloud.firestore {
     match /ofertas/{ofertaId} {
       allow read: if true;
       allow create: if isAdmin()
-        || (request.auth != null && request.resource.data.get('empresaId') != null && isAdminOfEmpresa(request.resource.data.empresaId));
+        || (request.auth != null
+            && request.resource.data.get('empresaId', '') != ''
+            && isAdminOfEmpresaParaOferta(request.resource.data.empresaId));
       allow update: if isAdmin()
-        || (request.auth != null && resource.data.get('empresaId') != null && isAdminOfEmpresa(resource.data.empresaId))
+        || (request.auth != null && resource.data.get('empresaId', '') != '' && isAdminOfEmpresaParaOferta(resource.data.empresaId))
         || ofertaUpdateSoloIncrementoVentas();
       allow delete: if isAdmin();
     }
@@ -94,6 +107,15 @@ service cloud.firestore {
     function empleadoPuedeLeer() {
       return isAdmin()
         || (resource.data.get('empresaId') != null && isAdminOfEmpresa(resource.data.empresaId))
+        || (request.auth != null && resource.data.get('uid') == request.auth.uid)
+        || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
+    }
+
+    // Listados (queries): sin get() sobre empresas — Firestore no garantiza list + get en otra colección.
+    // Copiamos el UID del admin de empresa en cada doc (empresaAdminUid) y consultamos por empresaId + empresaAdminUid.
+    function empleadoPuedeLeerList() {
+      return isAdmin()
+        || (resource.data.get('empresaAdminUid') != null && resource.data.empresaAdminUid == request.auth.uid)
         || (request.auth != null && resource.data.get('uid') == request.auth.uid)
         || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
     }
@@ -117,32 +139,44 @@ service cloud.firestore {
         && request.resource.data.correo == resource.data.correo;
     }
 
-    // Admin de empresa edita datos (no cambia empresaId ni uid).
+    // Admin de empresa edita datos (no cambia empresaId ni uid ni empresaAdminUid).
     function empleadoUpdatePorAdminEmpresa() {
       return request.auth != null
         && resource.data.get('empresaId') != null
         && isAdminOfEmpresa(resource.data.empresaId)
         && request.resource.data.empresaId == resource.data.empresaId
         && request.resource.data.uid == resource.data.uid
+        && request.resource.data.get('empresaAdminUid', null) == resource.data.get('empresaAdminUid', null)
         && request.resource.data.nombres is string
         && request.resource.data.apellidos is string
         && request.resource.data.correo is string;
     }
 
+    function empleadoCreateKeysValid() {
+      return request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo'])
+        || request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'empresaAdminUid'])
+        || (
+          request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid'])
+          && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
+        )
+        || (
+          request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid', 'empresaAdminUid'])
+          && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
+        );
+    }
+
     match /empleados/{empleadoId} {
-      allow read: if request.auth != null && empleadoPuedeLeer();
+      allow get: if request.auth != null && empleadoPuedeLeer();
+      allow list: if request.auth != null && empleadoPuedeLeerList();
       allow create: if isAdmin()
         || (
           request.auth != null
           && request.resource.data.get('empresaId') != null
           && isAdminOfEmpresa(request.resource.data.empresaId)
-          && (
-            request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo'])
-            || (
-              request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid'])
-              && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
-            )
-          )
+          && empleadoCreateKeysValid()
+          && (!request.resource.data.keys().hasAny(['empresaAdminUid'])
+            || (request.resource.data.empresaAdminUid is string
+              && request.resource.data.empresaAdminUid == request.auth.uid))
           && request.resource.data.nombres is string
           && request.resource.data.apellidos is string
           && request.resource.data.correo is string
