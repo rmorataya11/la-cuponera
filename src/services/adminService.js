@@ -240,15 +240,19 @@ export async function getEmpleadosTodos() {
 export async function addEmpleado(data) {
   const empresaId = (data.empresaId && String(data.empresaId).trim()) || null;
   if (!empresaId) throw new Error('empresaId es requerido para agregar un empleado.');
+  // Solo campos que aceptan las reglas de Firestore (hasOnly). No enviar uid: null — omite el campo si está vacío.
   const payload = {
     empresaId,
-    nombres: (data.nombres || '').trim(),
-    apellidos: (data.apellidos || '').trim(),
-    correo: (data.correo || '').trim().toLowerCase(),
-    uid: data.uid || null,
+    nombres: String(data.nombres ?? '').trim(),
+    apellidos: String(data.apellidos ?? '').trim(),
+    correo: String(data.correo ?? '').trim().toLowerCase(),
   };
   if (data.empresaAdminUid) {
-    payload.empresaAdminUid = data.empresaAdminUid;
+    payload.empresaAdminUid = String(data.empresaAdminUid);
+  }
+  const uidVal = data.uid;
+  if (uidVal != null && uidVal !== '') {
+    payload.uid = uidVal;
   }
   const ref = await addDoc(collection(db, 'empleados'), payload);
   return ref.id;

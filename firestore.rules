@@ -25,7 +25,10 @@ service cloud.firestore {
           || (
             request.auth.token.email != null
             && d.get('correo', '') != ''
-            && d.get('correo', '') == request.auth.token.email
+            && (
+              d.get('correo', '') == request.auth.token.email
+              || d.correo == request.auth.token.email
+            )
           )
         );
     }
@@ -176,15 +179,17 @@ service cloud.firestore {
         && request.resource.data.correo is string;
     }
 
+    // Solo combinaciones permitidas (el cliente no debe mandar uid: null ni campos extra).
     function empleadoCreateKeysValid() {
-      return request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo'])
-        || request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'empresaAdminUid'])
+      let k = request.resource.data.keys();
+      return k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo'])
+        || k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'empresaAdminUid'])
         || (
-          request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid'])
+          k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid'])
           && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
         )
         || (
-          request.resource.data.keys().hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid', 'empresaAdminUid'])
+          k.hasOnly(['empresaId', 'nombres', 'apellidos', 'correo', 'uid', 'empresaAdminUid'])
           && (request.resource.data.get('uid', null) == null || request.resource.data.uid == '')
         );
     }
@@ -195,12 +200,12 @@ service cloud.firestore {
       allow create: if isAdmin()
         || (
           request.auth != null
-          && request.resource.data.get('empresaId') != null
+          && request.resource.data.empresaId is string
+          && request.resource.data.get('empresaId') != ''
           && isAdminOfEmpresaParaEmpleado(request.resource.data.empresaId)
           && empleadoCreateKeysValid()
           && (!request.resource.data.keys().hasAny(['empresaAdminUid'])
-            || (request.resource.data.empresaAdminUid is string
-              && request.resource.data.empresaAdminUid == request.auth.uid))
+            || request.resource.data.empresaAdminUid == request.auth.uid)
           && request.resource.data.nombres is string
           && request.resource.data.apellidos is string
           && request.resource.data.correo is string
