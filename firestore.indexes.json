@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "empleados",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "empresaId", "order": "ASCENDING" },
+        { "fieldPath": "empresaAdminUid", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

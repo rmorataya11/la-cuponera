@@ -132,7 +132,7 @@ service cloud.firestore {
     // Copiamos el UID del admin de empresa en cada doc (empresaAdminUid) y consultamos por empresaId + empresaAdminUid.
     function empleadoPuedeLeerList() {
       return isAdmin()
-        || (resource.data.get('empresaAdminUid') != null && resource.data.empresaAdminUid == request.auth.uid)
+        || (request.auth != null && resource.data.empresaAdminUid == request.auth.uid)
         || (request.auth != null && resource.data.get('uid') == request.auth.uid)
         || (request.auth != null && resource.data.get('correo', '') == request.auth.token.email);
     }
@@ -156,14 +156,21 @@ service cloud.firestore {
         && request.resource.data.correo == resource.data.correo;
     }
 
-    // Admin de empresa edita datos (no cambia empresaId ni uid ni empresaAdminUid).
+    // Admin de empresa edita datos (no cambia empresaId ni uid). Puede fijar empresaAdminUid la primera vez (docs viejos).
+    function empleadoEmpresaAdminUidOkEnUpdate() {
+      let old = resource.data.get('empresaAdminUid', null);
+      let neu = request.resource.data.get('empresaAdminUid', null);
+      return old == neu
+        || (old == null && neu == request.auth.uid);
+    }
+
     function empleadoUpdatePorAdminEmpresa() {
       return request.auth != null
         && resource.data.get('empresaId') != null
         && isAdminOfEmpresaParaEmpleado(resource.data.empresaId)
         && request.resource.data.empresaId == resource.data.empresaId
         && request.resource.data.uid == resource.data.uid
-        && request.resource.data.get('empresaAdminUid', null) == resource.data.get('empresaAdminUid', null)
+        && empleadoEmpresaAdminUidOkEnUpdate()
         && request.resource.data.nombres is string
         && request.resource.data.apellidos is string
         && request.resource.data.correo is string;

@@ -202,25 +202,33 @@ export async function deleteEmpresa(empresaId) {
 
 /**
  * Empleados de una empresa (panel empresa).
- * Si pasás viewerAdminUid (UID del admin de empresa), se usa consulta compuesta con empresaAdminUid
- * para cumplir reglas de Firestore en listados (sin get() a /empresas en la regla de list).
+ * Solo consulta compuesta empresaId + empresaAdminUid: las reglas de Firestore no permiten
+ * listar solo por empresaId (habría docs que no pasan empleadoPuedeLeerList → permission-denied).
+ * viewerAdminUid es obligatorio (UID del admin de sesión).
+ * Incluye alias empresal/empresa1 como en ofertas.
  */
 export async function getEmpleadosPorEmpresa(empresaId, viewerAdminUid) {
-  if (!empresaId) return [];
-  if (viewerAdminUid) {
+  if (!empresaId || !viewerAdminUid) return [];
+  const ids = new Set([empresaId]);
+  if (empresaId === 'empresal') ids.add('empresa1');
+  if (empresaId === 'empresa1') ids.add('empresal');
+  const seen = new Set();
+  const out = [];
+  for (const eid of ids) {
     const snap = await getDocs(
       query(
         collection(db, 'empleados'),
-        where('empresaId', '==', empresaId),
+        where('empresaId', '==', eid),
         where('empresaAdminUid', '==', viewerAdminUid)
       )
     );
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    for (const d of snap.docs) {
+      if (seen.has(d.id)) continue;
+      seen.add(d.id);
+      out.push({ id: d.id, ...d.data() });
+    }
   }
-  const snap = await getDocs(
-    query(collection(db, 'empleados'), where('empresaId', '==', empresaId))
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return out;
 }
 
 /** Todos los empleados (panel admin global). */
@@ -246,6 +254,21 @@ export async function addEmpleado(data) {
   return ref.id;
 }
 
+/** Incluir siempre al editar desde panel empresa para rellenar empresaAdminUid en registros viejos. */
+export async function updateEmpleado(id, data, options = {}) {
+  const ref = doc(db, 'empleados', id);
+  const updates = {
+    nombres: (data.nombres || '').trim(),
+    apellidos: (data.apellidos || '').trim(),
+    correo: (data.correo || '').trim().toLowerCase(),
+  };
+  if (data.uid !== undefined) updates.uid = data.uid;
+  if (options.empresaAdminUid) {
+    updates.empresaAdminUid = options.empresaAdminUid;
+  }
+  await updateDoc(ref, updates);
+}
+
 /**
  * Rellena empresaAdminUid en empleados antiguos (copiado de empresas/{id}.adminUid).
  * Solo puede ejecutarlo un admin global; llamar desde el panel admin.
@@ -258,29 +281,25 @@ export async function backfillEmpresaAdminUidEnEmpleados() {
   const empresaAdminById = Object.fromEntries(
     empresasSnap.docs.map((d) => [d.id, d.data()?.adminUid || null])
   );
+  function adminUidParaEmpresa(eid) {
+    let u = empresaAdminById[eid];
+    if (u) return u;
+    if (eid === 'empresa1') return empresaAdminById['empresal'] || null;
+    if (eid === 'empresal') return empresaAdminById['empresa1'] || null;
+    return null;
+  }
   let actualizados = 0;
   for (const d of empleadosSnap.docs) {
     const e = d.data();
     if (e.empresaAdminUid) continue;
     const empresaId = e.empresaId;
     if (!empresaId) continue;
-    const adminUid = empresaAdminById[empresaId];
+    const adminUid = adminUidParaEmpresa(empresaId);
     if (!adminUid) continue;
     await updateDoc(doc(db, 'empleados', d.id), { empresaAdminUid: adminUid });
     actualizados += 1;
   }
   return actualizados;
-}
-
-export async function updateEmpleado(id, data) {
-  const ref = doc(db, 'empleados', id);
-  const updates = {
-    nombres: (data.nombres || '').trim(),
-    apellidos: (data.apellidos || '').trim(),
-    correo: (data.correo || '').trim().toLowerCase(),
-  };
-  if (data.uid !== undefined) updates.uid = data.uid;
-  await updateDoc(ref, updates);
 }
 
 /** Solo actualiza el campo uid del empleado (para vincular cuenta Auth). Lo debe llamar el propio usuario recién creado. */

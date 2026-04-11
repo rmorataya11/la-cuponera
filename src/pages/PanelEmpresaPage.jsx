@@ -360,7 +360,7 @@ const [credencialesCreadas, setCredencialesCreadas] = useState(null);
     setSavingEmpleado(true);
     try {
       if (editingEmpleado) {
-        await updateEmpleado(editingEmpleado.id, formEmpleado);
+        await updateEmpleado(editingEmpleado.id, formEmpleado, { empresaAdminUid: user.uid });
         setEditingEmpleado(null);
         setShowFormEmpleado(false);
         setFormEmpleado({ nombres: '', apellidos: '', correo: '', crearCuenta: false, contraseña: '', tuContraseña: '' });
